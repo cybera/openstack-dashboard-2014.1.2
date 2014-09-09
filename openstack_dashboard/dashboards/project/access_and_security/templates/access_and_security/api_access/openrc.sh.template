@@ -19,6 +19,9 @@ export OS_TENANT_NAME="{{ tenant_name|shellfilter }}"
 # performing the action as the **user**.
 export OS_USERNAME="{{ user.username|shellfilter }}"
 
+# Region
+export OS_REGION_NAME="{{ region_name }}"
+
 # With Keystone you pass the keystone password.
 echo "Please enter your OpenStack Password: "
 read -sr OS_PASSWORD_INPUT
