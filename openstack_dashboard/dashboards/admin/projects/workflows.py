@@ -775,14 +775,14 @@ class UpdateProject(workflows.Workflow):
                                                 project_id,
                                                 **neutron_data)
             # jt
-            if data['images'] != 5:
-                api.jt.set_image_quota(project_id, data['images'])
-            if data['expiration'] != 'Information not available.':
-                api.jt.set_expiration_date(project_id, data['expiration'])
-            if data['object_mb'] != 204800:
-                api.jt.set_object_mb_quota(project_id, data['object_mb'])
-            if data['reseller_logo'] != 'Information not available.':
-                api.jt.set_reseller_logo(project_id, data['reseller_logo'])
+            # MJ
+            # Unfortunately these quotas values are always written when quotas are
+            # changed as we don't have access to the pre-existing values.
+            api.jt.set_image_quota(project_id, data['images'])
+            api.jt.set_expiration_date(project_id, data['expiration'])
+            api.jt.set_object_mb_quota(project_id, data['object_mb'])
+            api.jt.set_reseller_logo(project_id, data['reseller_logo'])
+
             return True
         except Exception:
             exceptions.handle(request, _('Modified project information and '
