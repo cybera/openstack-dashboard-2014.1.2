@@ -81,6 +81,18 @@ class CreateImage(tables.LinkAction):
     classes = ("ajax-modal", "btn-create")
     policy_rules = (("image", "add_image"),)
 
+    # jt
+    def allowed(self, request, image=None):
+        project_id = request.user.tenant_id
+        # Get the total number of images owned by the tenant
+        owned_image_count = api.jt.get_image_count(project_id, request)
+        image_limit = api.jt.get_image_quota(project_id)
+
+        if image_limit > owned_image_count:
+            return True
+        else:
+            return False
+
 
 class EditImage(tables.LinkAction):
     name = "edit"

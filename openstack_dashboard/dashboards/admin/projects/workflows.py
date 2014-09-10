@@ -63,6 +63,8 @@ class UpdateProjectQuotaAction(workflows.Action):
                                          label=_("Security Groups"))
     security_group_rules = forms.IntegerField(min_value=-1,
                                               label=_("Security Group Rules"))
+    # jt
+    images = forms.IntegerField(min_value=0, label=_("Images"))
 
     # Neutron
     security_group = forms.IntegerField(min_value=-1,
@@ -85,6 +87,13 @@ class UpdateProjectQuotaAction(workflows.Action):
                 self.fields[field].required = False
                 self.fields[field].widget = forms.HiddenInput()
 
+        # jt
+        if 'project_id' in args[0]:
+            project_id = args[0]['project_id']
+            self.fields['images'].initial = api.jt.get_image_quota(project_id)
+        else:
+            self.fields['images'].initial = 5
+
     class Meta:
         name = _("Quota")
         slug = 'update_quotas'
@@ -95,7 +104,10 @@ class UpdateProjectQuotaAction(workflows.Action):
 class UpdateProjectQuota(workflows.Step):
     action_class = UpdateProjectQuotaAction
     depends_on = ("project_id",)
-    contributes = quotas.QUOTA_FIELDS
+    # jt
+    #contributes = quotas.QUOTA_FIELDS
+    QUOTA_FIELDS = quotas.QUOTA_FIELDS + ('images',)
+    contributes = QUOTA_FIELDS
 
 
 class CreateProjectInfoAction(workflows.Action):
@@ -406,6 +418,7 @@ class CreateProject(workflows.Workflow):
                                                       role=role.id)
                     users_added += 1
                 users_to_add -= users_added
+
         except Exception:
             if PROJECT_GROUP_ENABLED:
                 group_msg = _(", add project groups")
@@ -466,6 +479,9 @@ class CreateProject(workflows.Workflow):
                 api.neutron.tenant_quota_update(request,
                                                 project_id,
                                                 **neutron_data)
+            # jt
+            if data['images'] != 5:
+                api.jt.set_image_quota(project_id, data['images'])
         except Exception:
             exceptions.handle(request, _('Unable to set project quotas.'))
         return True
@@ -728,6 +744,9 @@ class UpdateProject(workflows.Workflow):
                 api.neutron.tenant_quota_update(request,
                                                 project_id,
                                                 **neutron_data)
+            # jt
+            if data['images'] != 5:
+                api.jt.set_image_quota(project_id, data['images'])
             return True
         except Exception:
             exceptions.handle(request, _('Modified project information and '

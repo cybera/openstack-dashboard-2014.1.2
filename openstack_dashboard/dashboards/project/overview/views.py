@@ -55,6 +55,12 @@ class ProjectOverview(usage.UsageView):
 
     def get_data(self):
         super(ProjectOverview, self).get_data()
+        # jt
+        from openstack_dashboard import api
+        project_id = self.request.user.tenant_id
+        owned_image_count = api.jt.get_image_count(project_id, self.request)
+        image_limit = api.jt.get_image_quota(project_id)
+        self.usage.limits['images'] = {'used': owned_image_count, 'quota': image_limit}
         return self.usage.get_instances()
 
 

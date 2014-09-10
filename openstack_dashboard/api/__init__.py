@@ -47,6 +47,8 @@ from openstack_dashboard.api import nova
 from openstack_dashboard.api import swift
 from openstack_dashboard.api import trove
 from openstack_dashboard.api import vpn
+# jt
+from openstack_dashboard.api import jt
 
 
 __all__ = [
@@ -64,4 +66,6 @@ __all__ = [
     "ceilometer",
     "trove",
     "vpn",
+    # jt
+    "jt",
 ]

@@ -301,8 +301,21 @@ class CreateSnapshot(tables.LinkAction):
         return {"project_id": project_id}
 
     def allowed(self, request, instance=None):
-        return instance.status in SNAPSHOT_READY_STATES \
-            and not is_deleting(instance)
+        # jt
+        #return instance.status in SNAPSHOT_READY_STATES \
+        #    and not is_deleting(instance)
+        if instance.status in SNAPSHOT_READY_STATES and not is_deleting(instance):
+            # Check the limit of how many images the user can own
+            project_id = request.user.tenant_id
+            owned_image_count = api.jt.get_image_count(project_id, request)
+            image_limit = api.jt.get_image_quota(project_id)
+
+            if image_limit > owned_image_count:
+                return True
+            else:
+                return False
+        else:
+            return False
 
 
 class ConsoleLink(tables.LinkAction):
