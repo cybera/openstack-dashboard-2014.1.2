@@ -35,6 +35,9 @@ from openstack_dashboard.api import keystone
 from openstack_dashboard.api import nova
 from openstack_dashboard.usage import quotas
 
+# MJ
+import datetime
+
 INDEX_URL = "horizon:admin:projects:index"
 ADD_USER_URL = "horizon:admin:projects:create_user"
 PROJECT_GROUP_ENABLED = keystone.VERSIONS.active >= 3
@@ -99,9 +102,11 @@ class UpdateProjectQuotaAction(workflows.Action):
             self.fields['reseller_logo'].initial = api.jt.get_reseller_logo(project_id)
         else:
             self.fields['images'].initial = 5
-            self.fields['expiration'].initial = 'Information not available.'
             self.fields['object_mb'].initial = 204800
             self.fields['reseller_logo'].initial = 'Information not available.'
+            future_expire_date = datetime.date.today()
+            future_expire_date = future_expire_date.replace(year=future_expire_date.year+1).strftime('%B %d, %Y')
+            self.fields['expiration'].initial = future_expire_date
 
     class Meta:
         name = _("Quota")
