@@ -140,7 +140,9 @@ class CreateSnapshot(tables.LinkAction):
         return {"project_id": project_id}
 
     def allowed(self, request, volume=None):
-        return volume.status in ("available", "in-use")
+        # jt
+        #return volume.status in ("available", "in-use")
+        return False
 
 
 class EditVolume(tables.LinkAction):
