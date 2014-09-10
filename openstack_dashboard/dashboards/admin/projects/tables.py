@@ -62,6 +62,16 @@ class UsageLink(tables.LinkAction):
     classes = ("btn-stats",)
     policy_rules = (("compute", "compute_extension:simple_tenant_usage:show"),)
 
+# MJ
+class GraphLink(tables.LinkAction):
+    name = "graph"
+    verbose_name = _("View Usage - Graph")
+    url = "horizon:admin:projects:update"
+    classes = ("btn-stats",)
+
+    def get_link_url(self, project):
+      return "".join(["http://graphite.dair-atir.canarie.ca/grafana/#/dashboard/script/dair-project.js?project=", project.id])
+
 
 class CreateProject(tables.LinkAction):
     name = "create"
@@ -185,8 +195,11 @@ class TenantsTable(tables.DataTable):
         name = "tenants"
         verbose_name = _("Projects")
         row_class = UpdateRow
+        # MJ
+        #row_actions = (ViewMembersLink, ViewGroupsLink, UpdateProject,
+        #               UsageLink, ModifyQuotas, DeleteTenantsAction)
         row_actions = (ViewMembersLink, ViewGroupsLink, UpdateProject,
-                       UsageLink, ModifyQuotas, DeleteTenantsAction)
+                       UsageLink, GraphLink, ModifyQuotas, DeleteTenantsAction)
         table_actions = (TenantFilterAction, CreateProject,
                          DeleteTenantsAction)
         pagination_param = "tenant_marker"
