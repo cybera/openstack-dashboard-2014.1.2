@@ -64,6 +64,7 @@ class UpdateProjectQuotaAction(workflows.Action):
     security_group_rules = forms.IntegerField(min_value=-1,
                                               label=_("Security Group Rules"))
     # jt
+    object_mb = forms.IntegerField(min_value=0, label=_("Object Storage (MB)"))
     images = forms.IntegerField(min_value=0, label=_("Images"))
     expiration = forms.CharField(max_length=50, label=_("Expiration Date"))
 
@@ -93,9 +94,11 @@ class UpdateProjectQuotaAction(workflows.Action):
             project_id = args[0]['project_id']
             self.fields['images'].initial = api.jt.get_image_quota(project_id)
             self.fields['expiration'].initial = api.jt.get_expiration_date(project_id)
+            self.fields['object_mb'].initial = api.jt.get_object_mb_quota(project_id)
         else:
             self.fields['images'].initial = 5
             self.fields['expiration'].initial = 'Information not available.'
+            self.fields['object_mb'].initial = 204800
 
     class Meta:
         name = _("Quota")
@@ -109,7 +112,7 @@ class UpdateProjectQuota(workflows.Step):
     depends_on = ("project_id",)
     # jt
     #contributes = quotas.QUOTA_FIELDS
-    QUOTA_FIELDS = quotas.QUOTA_FIELDS + ('images', 'expiration')
+    QUOTA_FIELDS = quotas.QUOTA_FIELDS + ('object_mb', 'images', 'expiration')
     contributes = QUOTA_FIELDS
 
 
@@ -422,6 +425,16 @@ class CreateProject(workflows.Workflow):
                     users_added += 1
                 users_to_add -= users_added
 
+            # jt
+            # Make sure admin is added to the project as a ResellerAdmin
+            users = api.keystone.user_list(request)
+            admin_id = [user.id for user in users if user.name == 'admin'][0]
+            reseller_admin_role_id = [role.id for role in available_roles if role.name == 'ResellerAdmin'][0]
+            api.keystone.add_tenant_user_role(request,
+                                              project=project_id,
+                                              user=admin_id,
+                                              role=reseller_admin_role_id)
+
         except Exception:
             if PROJECT_GROUP_ENABLED:
                 group_msg = _(", add project groups")
@@ -487,6 +500,8 @@ class CreateProject(workflows.Workflow):
                 api.jt.set_image_quota(project_id, data['images'])
             if data['expiration'] != 'Information not available.':
                 api.jt.set_expiration_date(project_id, data['expiration'])
+            if data['object_mb'] != 204800:
+                api.jt.set_object_mb_quota(project_id, data['object_mb'])
         except Exception:
             exceptions.handle(request, _('Unable to set project quotas.'))
         return True
@@ -754,6 +769,8 @@ class UpdateProject(workflows.Workflow):
                 api.jt.set_image_quota(project_id, data['images'])
             if data['expiration'] != 'Information not available.':
                 api.jt.set_expiration_date(project_id, data['expiration'])
+            if data['object_mb'] != 204800:
+                api.jt.set_object_mb_quota(project_id, data['object_mb'])
             return True
         except Exception:
             exceptions.handle(request, _('Modified project information and '

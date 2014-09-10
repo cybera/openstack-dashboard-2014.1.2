@@ -67,6 +67,11 @@ class ProjectOverview(usage.UsageView):
         # expiration
         self.usage.limits['expiration'] = api.jt.get_expiration_date(project_id)
 
+        # object storage
+        object_mb_usage = api.jt.get_object_mb_usage(project_id)
+        object_mb_limit = api.jt.get_object_mb_quota(project_id)
+        self.usage.limits['object_mb'] = {'used': object_mb_usage, 'quota': object_mb_limit}
+
         return self.usage.get_instances()
 
 
