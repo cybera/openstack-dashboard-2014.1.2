@@ -81,6 +81,30 @@ def set_start_date(project_id, start_date):
         for k, v in dates.iteritems():
             f.write("%s:%s\n" % (k,v))
 
+def get_dair_notices():
+    notices = {}
+    with open('/etc/openstack-dashboard/dair-notices.txt') as f:
+        for line in f:
+            line = line.strip()
+            if line != "":
+              foo = line.split('::')
+              notices[foo[0]] = foo[1]
+    return notices
+
+def get_dair_notice(project_id):
+    notices = get_dair_notices()
+    if project_id in notices:
+        return notices[project_id]
+    else:
+        return ""
+
+def set_dair_notice(project_id, notice):
+    notices = get_dair_notices()
+    notices[project_id] = notice
+    with open('/etc/openstack-dashboard/dair-notices.txt', 'w') as f:
+        for k, v in notices.iteritems():
+          f.write("%s::%s\n" % (k,v))
+
 def get_reseller_logos():
     logos = {}
     with open('/etc/openstack-dashboard/dair-reseller-logos.txt') as f:
