@@ -58,9 +58,15 @@ class ProjectOverview(usage.UsageView):
         # jt
         from openstack_dashboard import api
         project_id = self.request.user.tenant_id
+
+        # images
         owned_image_count = api.jt.get_image_count(project_id, self.request)
         image_limit = api.jt.get_image_quota(project_id)
         self.usage.limits['images'] = {'used': owned_image_count, 'quota': image_limit}
+
+        # expiration
+        self.usage.limits['expiration'] = api.jt.get_expiration_date(project_id)
+
         return self.usage.get_instances()
 
 

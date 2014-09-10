@@ -65,6 +65,7 @@ class UpdateProjectQuotaAction(workflows.Action):
                                               label=_("Security Group Rules"))
     # jt
     images = forms.IntegerField(min_value=0, label=_("Images"))
+    expiration = forms.CharField(max_length=50, label=_("Expiration Date"))
 
     # Neutron
     security_group = forms.IntegerField(min_value=-1,
@@ -91,8 +92,10 @@ class UpdateProjectQuotaAction(workflows.Action):
         if 'project_id' in args[0]:
             project_id = args[0]['project_id']
             self.fields['images'].initial = api.jt.get_image_quota(project_id)
+            self.fields['expiration'].initial = api.jt.get_expiration_date(project_id)
         else:
             self.fields['images'].initial = 5
+            self.fields['expiration'].initial = 'Information not available.'
 
     class Meta:
         name = _("Quota")
@@ -106,7 +109,7 @@ class UpdateProjectQuota(workflows.Step):
     depends_on = ("project_id",)
     # jt
     #contributes = quotas.QUOTA_FIELDS
-    QUOTA_FIELDS = quotas.QUOTA_FIELDS + ('images',)
+    QUOTA_FIELDS = quotas.QUOTA_FIELDS + ('images', 'expiration')
     contributes = QUOTA_FIELDS
 
 
@@ -482,6 +485,8 @@ class CreateProject(workflows.Workflow):
             # jt
             if data['images'] != 5:
                 api.jt.set_image_quota(project_id, data['images'])
+            if data['expiration'] != 'Information not available.':
+                api.jt.set_expiration_date(project_id, data['expiration'])
         except Exception:
             exceptions.handle(request, _('Unable to set project quotas.'))
         return True
@@ -747,6 +752,8 @@ class UpdateProject(workflows.Workflow):
             # jt
             if data['images'] != 5:
                 api.jt.set_image_quota(project_id, data['images'])
+            if data['expiration'] != 'Information not available.':
+                api.jt.set_expiration_date(project_id, data['expiration'])
             return True
         except Exception:
             exceptions.handle(request, _('Modified project information and '
