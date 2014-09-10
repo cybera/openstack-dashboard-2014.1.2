@@ -67,6 +67,7 @@ class UpdateProjectQuotaAction(workflows.Action):
     object_mb = forms.IntegerField(min_value=0, label=_("Object Storage (MB)"))
     images = forms.IntegerField(min_value=0, label=_("Images"))
     expiration = forms.CharField(max_length=50, label=_("Expiration Date"))
+    reseller_logo = forms.CharField(max_length=100, label=_("Reseller Logo"))
 
     # Neutron
     security_group = forms.IntegerField(min_value=-1,
@@ -95,10 +96,12 @@ class UpdateProjectQuotaAction(workflows.Action):
             self.fields['images'].initial = api.jt.get_image_quota(project_id)
             self.fields['expiration'].initial = api.jt.get_expiration_date(project_id)
             self.fields['object_mb'].initial = api.jt.get_object_mb_quota(project_id)
+            self.fields['reseller_logo'].initial = api.jt.get_reseller_logo(project_id)
         else:
             self.fields['images'].initial = 5
             self.fields['expiration'].initial = 'Information not available.'
             self.fields['object_mb'].initial = 204800
+            self.fields['reseller_logo'].initial = 'Information not available.'
 
     class Meta:
         name = _("Quota")
@@ -112,7 +115,7 @@ class UpdateProjectQuota(workflows.Step):
     depends_on = ("project_id",)
     # jt
     #contributes = quotas.QUOTA_FIELDS
-    QUOTA_FIELDS = quotas.QUOTA_FIELDS + ('object_mb', 'images', 'expiration')
+    QUOTA_FIELDS = quotas.QUOTA_FIELDS + ('object_mb', 'images', 'expiration', 'reseller_logo',)
     contributes = QUOTA_FIELDS
 
 
@@ -502,6 +505,8 @@ class CreateProject(workflows.Workflow):
                 api.jt.set_expiration_date(project_id, data['expiration'])
             if data['object_mb'] != 204800:
                 api.jt.set_object_mb_quota(project_id, data['object_mb'])
+            if data['reseller_logo'] != 'Information not available.':
+                api.jt.set_reseller_logo(project_id, data['reseller_logo'])
         except Exception:
             exceptions.handle(request, _('Unable to set project quotas.'))
         return True
@@ -771,6 +776,8 @@ class UpdateProject(workflows.Workflow):
                 api.jt.set_expiration_date(project_id, data['expiration'])
             if data['object_mb'] != 204800:
                 api.jt.set_object_mb_quota(project_id, data['object_mb'])
+            if data['reseller_logo'] != 'Information not available.':
+                api.jt.set_reseller_logo(project_id, data['reseller_logo'])
             return True
         except Exception:
             exceptions.handle(request, _('Modified project information and '

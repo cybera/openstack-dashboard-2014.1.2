@@ -55,6 +55,7 @@ def openstack(request):
                              region in available_regions]}
     context['regions'] = regions
 
+    # jt
     from openstack_dashboard.api import jt
     context['reseller_logo'] = 'logo2.png'
     context['reseller_splash'] = 'logo.png'
