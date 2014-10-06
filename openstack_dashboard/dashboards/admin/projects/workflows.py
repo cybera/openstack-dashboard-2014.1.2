@@ -110,6 +110,7 @@ class UpdateProjectQuotaAction(workflows.Action):
             future_expire_date = start_date.replace(year=start_date.year+1).strftime('%B %d, %Y')
             self.fields['images'].initial = 5
             self.fields['start_date'].initial = start_date.strftime('%B %d, %Y')
+            self.fields['expiration'].initial = future_expire_date
             self.fields['dair_notice'].initial = 'Information not available.'
             self.fields['object_mb'].initial = 204800
             self.fields['reseller_logo'].initial = 'Information not available.'
