@@ -45,6 +45,42 @@ PROJECT_USER_MEMBER_SLUG = "update_members"
 PROJECT_GROUP_MEMBER_SLUG = "update_group_members"
 
 
+# jt
+class UpdateDAIRAction(workflows.Action):
+    expiration = forms.CharField(max_length=50, label=_("Expiration Date"))
+    start_date = forms.CharField(max_length=50, label=_("Start Date"))
+    dair_notice = forms.CharField(max_length=750, label=_("Notice from DAIR"), required=False)
+    reseller_logo = forms.CharField(max_length=100, label=_("Reseller Logo"))
+
+    def __init__(self, request, *args, **kwargs):
+        super(UpdateDAIRAction, self).__init__(request,
+                                                       *args,
+                                                       **kwargs)
+        if 'project_id' in args[0]:
+            project_id = args[0]['project_id']
+            self.fields['expiration'].initial = api.jt.get_expiration_date(project_id)
+            self.fields['start_date'].initial = api.jt.get_start_date(project_id)
+            self.fields['dair_notice'].initial = api.jt.get_dair_notice(project_id)
+            self.fields['reseller_logo'].initial = api.jt.get_reseller_logo(project_id)
+        else:
+            start_date = datetime.date.today()
+            future_expire_date = start_date.replace(year=start_date.year+1).strftime('%B %d, %Y')
+            self.fields['start_date'].initial = start_date.strftime('%B %d, %Y')
+            self.fields['expiration'].initial = future_expire_date
+            self.fields['dair_notice'].initial = 'Information not available.'
+            self.fields['reseller_logo'].initial = 'Information not available.'
+
+    class Meta:
+        name = _("DAIR")
+        slug = 'update_dair'
+        help_text = _("From here you can set DAIR information for the project.")
+
+class UpdateDAIR(workflows.Step):
+    action_class = UpdateDAIRAction
+    depends_on = ("project_id",)
+    QUOTA_FIELDS = quotas.QUOTA_FIELDS + ('object_mb', 'images',)
+    contributes = ('expiration', 'start_date', 'dair_notice', 'reseller_logo',)
+
 class UpdateProjectQuotaAction(workflows.Action):
     ifcb_label = _("Injected File Content Bytes")
     metadata_items = forms.IntegerField(min_value=-1,
@@ -69,10 +105,6 @@ class UpdateProjectQuotaAction(workflows.Action):
     # jt
     object_mb = forms.IntegerField(min_value=0, label=_("Object Storage (MB)"))
     images = forms.IntegerField(min_value=0, label=_("Images"))
-    expiration = forms.CharField(max_length=50, label=_("Expiration Date"))
-    start_date = forms.CharField(max_length=50, label=_("Start Date"))
-    dair_notice = forms.CharField(max_length=750, label=_("Notice from DAIR"), required=False)
-    reseller_logo = forms.CharField(max_length=100, label=_("Reseller Logo"))
 
     # Neutron
     security_group = forms.IntegerField(min_value=-1,
@@ -99,21 +131,11 @@ class UpdateProjectQuotaAction(workflows.Action):
         if 'project_id' in args[0]:
             project_id = args[0]['project_id']
             self.fields['images'].initial = api.jt.get_image_quota(project_id)
-            self.fields['expiration'].initial = api.jt.get_expiration_date(project_id)
-            self.fields['start_date'].initial = api.jt.get_start_date(project_id)
-            self.fields['dair_notice'].initial = api.jt.get_dair_notice(project_id)
             self.fields['object_mb'].initial = api.jt.get_object_mb_quota(project_id)
-            self.fields['reseller_logo'].initial = api.jt.get_reseller_logo(project_id)
         else:
             # MJ expiration autofill
-            start_date = datetime.date.today()
-            future_expire_date = start_date.replace(year=start_date.year+1).strftime('%B %d, %Y')
             self.fields['images'].initial = 5
-            self.fields['start_date'].initial = start_date.strftime('%B %d, %Y')
-            self.fields['expiration'].initial = future_expire_date
-            self.fields['dair_notice'].initial = 'Information not available.'
             self.fields['object_mb'].initial = 204800
-            self.fields['reseller_logo'].initial = 'Information not available.'
 
     class Meta:
         name = _("Quota")
@@ -127,7 +149,7 @@ class UpdateProjectQuota(workflows.Step):
     depends_on = ("project_id",)
     # jt
     #contributes = quotas.QUOTA_FIELDS
-    QUOTA_FIELDS = quotas.QUOTA_FIELDS + ('object_mb', 'images', 'expiration', 'start_date', 'dair_notice', 'reseller_logo',)
+    QUOTA_FIELDS = quotas.QUOTA_FIELDS + ('object_mb', 'images',)
     contributes = QUOTA_FIELDS
 
 
@@ -383,7 +405,10 @@ class CreateProject(workflows.Workflow):
     success_url = "horizon:admin:projects:index"
     default_steps = (CreateProjectInfo,
                      UpdateProjectMembers,
-                     UpdateProjectQuota)
+                     # jt
+                     #UpdateProjectQuota
+                     UpdateProjectQuota,
+                     UpdateDAIR)
 
     def __init__(self, request=None, context_seed=None, entry_point=None,
                  *args, **kwargs):
@@ -391,7 +416,10 @@ class CreateProject(workflows.Workflow):
             self.default_steps = (CreateProjectInfo,
                                   UpdateProjectMembers,
                                   UpdateProjectGroups,
-                                  UpdateProjectQuota)
+                                  # jt
+                                  #UpdateProjectQuota)
+                                  UpdateProjectQuota,
+                                  UpdateDAIR)
         super(CreateProject, self).__init__(request=request,
                                             context_seed=context_seed,
                                             entry_point=entry_point,
@@ -556,7 +584,10 @@ class UpdateProject(workflows.Workflow):
     success_url = "horizon:admin:projects:index"
     default_steps = (UpdateProjectInfo,
                      UpdateProjectMembers,
-                     UpdateProjectQuota)
+                     # jt
+                     #UpdateProjectQuota)
+                     UpdateProjectQuota,
+                     UpdateDAIR)
 
     def __init__(self, request=None, context_seed=None, entry_point=None,
                  *args, **kwargs):
@@ -564,7 +595,10 @@ class UpdateProject(workflows.Workflow):
             self.default_steps = (UpdateProjectInfo,
                                   UpdateProjectMembers,
                                   UpdateProjectGroups,
-                                  UpdateProjectQuota)
+                                  # jt
+                                  #UpdateProjectQuota)
+                                  UpdateProjectQuota,
+                                  UpdateDAIR)
 
         super(UpdateProject, self).__init__(request=request,
                                             context_seed=context_seed,
