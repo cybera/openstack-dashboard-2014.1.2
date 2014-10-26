@@ -44,31 +44,39 @@ PROJECT_GROUP_ENABLED = keystone.VERSIONS.active >= 3
 PROJECT_USER_MEMBER_SLUG = "update_members"
 PROJECT_GROUP_MEMBER_SLUG = "update_group_members"
 
+# jt
+def get_admin_tenant_id(request):
+    tenants = api.keystone.tenant_list(request)[0]
+    admin_tenant_id = [tenant.id for tenant in tenants if tenant.name == 'admin'][0]
+    return admin_tenant_id
 
 # jt
 class UpdateDAIRAction(workflows.Action):
     expiration = forms.CharField(max_length=50, label=_("Expiration Date"))
     start_date = forms.CharField(max_length=50, label=_("Start Date"))
     dair_notice = forms.CharField(max_length=750, label=_("Notice from DAIR"), required=False)
-    reseller_logo = forms.CharField(max_length=100, label=_("Reseller Logo"))
+    dair_notice_link = forms.CharField(max_length=750, label=_("Optional URL"), required=False)
+    reseller_logo = forms.CharField(max_length=100, label=_("Reseller Logo"), required=False)
 
     def __init__(self, request, *args, **kwargs):
         super(UpdateDAIRAction, self).__init__(request,
-                                                       *args,
-                                                       **kwargs)
+                                               *args,
+                                               **kwargs)
         if 'project_id' in args[0]:
             project_id = args[0]['project_id']
             self.fields['expiration'].initial = api.jt.get_expiration_date(project_id)
             self.fields['start_date'].initial = api.jt.get_start_date(project_id)
             self.fields['dair_notice'].initial = api.jt.get_dair_notice(project_id)
+            self.fields['dair_notice_link'].initial = api.jt.get_dair_notice_link(project_id)
             self.fields['reseller_logo'].initial = api.jt.get_reseller_logo(project_id)
         else:
             start_date = datetime.date.today()
             future_expire_date = start_date.replace(year=start_date.year+1).strftime('%B %d, %Y')
             self.fields['start_date'].initial = start_date.strftime('%B %d, %Y')
             self.fields['expiration'].initial = future_expire_date
-            self.fields['dair_notice'].initial = 'Information not available.'
-            self.fields['reseller_logo'].initial = 'Information not available.'
+            self.fields['dair_notice'].initial = ''
+            self.fields['dair_notice_link'].initial = ''
+            self.fields['reseller_logo'].initial = ''
 
     class Meta:
         name = _("DAIR")
@@ -78,8 +86,7 @@ class UpdateDAIRAction(workflows.Action):
 class UpdateDAIR(workflows.Step):
     action_class = UpdateDAIRAction
     depends_on = ("project_id",)
-    QUOTA_FIELDS = quotas.QUOTA_FIELDS + ('object_mb', 'images',)
-    contributes = ('expiration', 'start_date', 'dair_notice', 'reseller_logo',)
+    contributes = ('expiration', 'start_date', 'dair_notice', 'dair_notice_link', 'reseller_logo',)
 
 class UpdateProjectQuotaAction(workflows.Action):
     ifcb_label = _("Injected File Content Bytes")
@@ -545,8 +552,10 @@ class CreateProject(workflows.Workflow):
                 api.jt.set_expiration_date(project_id, data['expiration'])
             if data['start_date'] != 'Information not available.':
                 api.jt.set_start_date(project_id, data['start_date'])
-            if data['dair_notice'] != 'Information not available.':
+            if data['dair_notice'] != '':
                 api.jt.set_dair_notice(project_id, data['dair_notice'])
+            if data['dair_notice_link'] != '':
+                api.jt.set_dair_notice_link(project_id, data['dair_notice_link'])
             if data['object_mb'] != 204800:
                 api.jt.set_object_mb_quota(project_id, data['object_mb'])
             if data['reseller_logo'] != 'Information not available.':
@@ -826,9 +835,15 @@ class UpdateProject(workflows.Workflow):
             api.jt.set_image_quota(project_id, data['images'])
             api.jt.set_expiration_date(project_id, data['expiration'])
             api.jt.set_start_date(project_id, data['start_date'])
-            api.jt.set_dair_notice(project_id, data['dair_notice'])
             api.jt.set_object_mb_quota(project_id, data['object_mb'])
             api.jt.set_reseller_logo(project_id, data['reseller_logo'])
+
+            is_admin_notice = False
+            admin_tenant_id = get_admin_tenant_id(request)
+            if admin_tenant_id == project_id:
+                is_admin_notice = True
+            api.jt.set_dair_notice(project_id, data['dair_notice'], is_admin_notice)
+            api.jt.set_dair_notice_link(project_id, data['dair_notice_link'], is_admin_notice)
 
             return True
         except Exception:

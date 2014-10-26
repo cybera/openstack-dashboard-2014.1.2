@@ -98,12 +98,52 @@ def get_dair_notice(project_id):
     else:
         return ""
 
-def set_dair_notice(project_id, notice):
+def set_dair_notice(project_id, notice, is_admin_notice):
     notices = get_dair_notices()
     notices[project_id] = notice
     with open('/etc/openstack-dashboard/dair-notices.txt', 'w') as f:
         for k, v in notices.iteritems():
-          f.write("%s::%s\n" % (k,v))
+            f.write("%s::%s\n" % (k,v))
+    if is_admin_notice and notice != 'Information not available.':
+        with open('/etc/openstack-dashboard/dair-admin-notice.txt', 'w') as f:
+            f.write(notice)
+
+def get_dair_notice_links():
+    links = {}
+    with open('/etc/openstack-dashboard/dair-notice-links.txt') as f:
+        for line in f:
+            line = line.strip()
+            if line != "":
+              foo = line.split('::')
+              links[foo[0]] = foo[1]
+    return links
+
+def get_dair_notice_link(project_id):
+    links = get_dair_notice_links()
+    if project_id in links:
+        return links[project_id]
+    else:
+        return ""
+
+def set_dair_notice_link(project_id, link, is_admin_notice):
+    links = get_dair_notice_links()
+    links[project_id] = link
+    with open('/etc/openstack-dashboard/dair-notice-links.txt', 'w') as f:
+        for k, v in links.iteritems():
+            f.write("%s::%s\n" % (k,v))
+    if is_admin_notice and link != 'Information not available.':
+        with open('/etc/openstack-dashboard/dair-admin-notice-link.txt', 'w') as f:
+            f.write(link)
+
+def get_dair_admin_notice():
+  with open('/etc/openstack-dashboard/dair-admin-notice.txt') as f:
+    for line in f:
+      return line.strip()
+
+def get_dair_admin_notice_link():
+  with open('/etc/openstack-dashboard/dair-admin-notice-link.txt') as f:
+    for line in f:
+      return line.strip()
 
 def get_reseller_logos():
     logos = {}
