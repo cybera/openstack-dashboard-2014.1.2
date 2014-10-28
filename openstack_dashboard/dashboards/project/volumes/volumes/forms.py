@@ -190,8 +190,11 @@ class CreateForm(forms.SelfHandlingForm):
                 exceptions.handle(request, _("Unable to retrieve "
                         "volume snapshots."))
 
-            images = utils.get_available_images(request,
-                                          request.user.tenant_id)
+            # jt
+            #images = utils.get_available_images(request,
+            #                              request.user.tenant_id)
+            images = None
+
             if images:
                 source_type_choices.append(("image_source", _("Image")))
                 choices = [('', _("Choose an image"))]
@@ -203,7 +206,9 @@ class CreateForm(forms.SelfHandlingForm):
             else:
                 del self.fields['image_source']
 
-            volumes = self.get_volumes(request)
+            # jt
+            #volumes = self.get_volumes(request)
+            volumes = None
             if volumes:
                 source_type_choices.append(("volume_source", _("Volume")))
                 choices = [('', _("Choose a volume"))]
