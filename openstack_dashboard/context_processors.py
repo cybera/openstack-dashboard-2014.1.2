@@ -69,4 +69,12 @@ def openstack(request):
     if reseller_splash != 'Information not available.':
         context['reseller_splash'] = reseller_splash
 
+    dair_admin_notice = jt.get_dair_admin_notice()
+    dair_admin_notice_link = jt.get_dair_admin_notice_link()
+    context['dair_admin_notice'] = ""
+    if dair_admin_notice != "":
+        if dair_admin_notice_link != "":
+            dair_admin_notice = '%s <a href="%s">More information</>.' % (dair_admin_notice, dair_admin_notice_link)
+        context['dair_admin_notice'] = dair_admin_notice
+
     return context
