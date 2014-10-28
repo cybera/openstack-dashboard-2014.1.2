@@ -72,8 +72,8 @@ def openstack(request):
     dair_admin_notice = jt.get_dair_admin_notice()
     dair_admin_notice_link = jt.get_dair_admin_notice_link()
     context['dair_admin_notice'] = ""
-    if dair_admin_notice != "":
-        if dair_admin_notice_link != "":
+    if dair_admin_notice != None:
+        if dair_admin_notice_link != None:
             dair_admin_notice = '%s <a href="%s">More information</>.' % (dair_admin_notice, dair_admin_notice_link)
         context['dair_admin_notice'] = dair_admin_notice
 
