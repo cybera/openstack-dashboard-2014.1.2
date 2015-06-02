@@ -123,6 +123,8 @@ class CreateVolumeFromImage(tables.LinkAction):
         return "?".join([base_url, params])
 
     def allowed(self, request, image=None):
+        # jt
+        return False
         if (image and image.container_format not in NOT_LAUNCHABLE_FORMATS
                 and base.is_service_enabled(request, 'volume')):
             return image.status == "active"
