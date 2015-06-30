@@ -311,11 +311,17 @@ class DeleteObject(tables.DeleteAction):
     name = "delete_object"
     data_type_singular = _("Object")
     data_type_plural = _("Objects")
-    allowed_data_types = ("objects",)
+    # jt
+    #allowed_data_types = ("objects",)
+    allowed_data_types = ("objects", "subfolders",)
 
     def delete(self, request, obj_id):
         obj = self.table.get_object_by_id(obj_id)
         container_name = obj.container_name
+        # jt
+        datum_type = getattr(obj, self.table._meta.data_type_name, None)
+        if datum_type == 'subfolders':
+            obj_id = obj_id[(len(container_name) + 1):] + "/"
         api.swift.swift_delete_object(request, container_name, obj_id)
 
     def get_success_url(self, request):
@@ -325,9 +331,10 @@ class DeleteObject(tables.DeleteAction):
 
 class DeleteMultipleObjects(DeleteObject):
     name = "delete_multiple_objects"
-    data_type_singular = _("Object")
-    data_type_plural = _("Objects")
-    allowed_data_types = ("objects",)
+    # jt
+    #data_type_singular = _("Object")
+    #data_type_plural = _("Objects")
+    #allowed_data_types = ("objects",)
 
 
 class CopyObject(tables.LinkAction):
