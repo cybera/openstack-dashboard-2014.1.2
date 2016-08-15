@@ -59,7 +59,7 @@ def openstack(request):
     from openstack_dashboard.api import jt
     context['reseller_logo'] = 'logo2.png'
     context['reseller_splash'] = 'logo.png'
-    fqdn = request.META['HTTP_HOST']
+    fqdn = request.META.get('HTTP_HOST', 'localhost.localdomain')
     domain,blah = fqdn.split('.', 1)
     reseller_logo = jt.get_reseller_logo(domain)
     if reseller_logo != 'Information not available.':
