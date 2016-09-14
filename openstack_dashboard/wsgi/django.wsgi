@@ -1,7 +1,7 @@
 import logging
 import os
 import sys
-import django.core.handlers.wsgi
+from django.core.wsgi import get_wsgi_application
 from django.conf import settings
 
 # Add this file path to sys.path in order to import settings
@@ -10,8 +10,8 @@ os.environ['DJANGO_SETTINGS_MODULE'] = 'openstack_dashboard.settings'
 sys.stdout = sys.stderr
 
 sys.path.append("/usr/share/openstack-dashboard/")
+sys.path.append('/usr/local/lib/python2.7/dist-packages')
 
 DEBUG = False
 
-application = django.core.handlers.wsgi.WSGIHandler()
-
+application = get_wsgi_application()
