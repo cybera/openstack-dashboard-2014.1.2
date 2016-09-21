@@ -179,8 +179,8 @@ class CreateImageForm(forms.SelfHandlingForm):
                 _('Your image %s has been queued for creation.') %
                 data['name'])
             return image
-        except Exception:
-            exceptions.handle(request, _('Unable to create new image.'))
+        except Exception as e:
+            exceptions.handle(request, e.message)
 
 
 class UpdateImageForm(forms.SelfHandlingForm):
