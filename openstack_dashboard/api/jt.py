@@ -1,4 +1,15 @@
+from dateutil import parser
+from django.conf import settings
+from horizon import conf
+import MySQLdb
+
 import glance
+
+def _dbconnect():
+    username = getattr(settings, 'DAIR_MYSQL_USERNAME')
+    password = getattr(settings, 'DAIR_MYSQL_PASSWORD')
+    host = getattr(settings, 'DAIR_MYSQL_HOST')
+    return MySQLdb.connect(host=host,user=username,passwd=password,db='dair_information')
 
 def get_image_quota(project_id):
     import subprocess
@@ -33,117 +44,143 @@ def get_object_mb_usage(project_id):
     object_mb_usage = subprocess.check_output(cmd, shell=True)
     return int(object_mb_usage.strip())
 
-def get_expiration_dates():
-    dates = {}
-    with open('/etc/openstack-dashboard/dair-expiration.txt') as f:
-        for line in f:
-            line = line.strip()
-            if line != "":
-                foo = line.split(':')
-                dates[foo[0]] = foo[1]
-    return dates
-
 def get_expiration_date(project_id):
-    dates = get_expiration_dates()
-    if project_id in dates:
-        return dates[project_id]
-    else:
+    try:
+        db = _dbconnect()
+        c = db.cursor()
+        query = "SELECT date_format(expiration_date, '%%M %%d, %%Y') from project_information where project_id = %s"
+        data = (project_id)
+        c.execute(query, data)
+        date = c.fetchone()
+        if date is not None:
+            return date[0]
         return "Information not available."
+    except MySQLdb.Error, e:
+        print(str(e))
+        return "Information not available..."
 
 def set_expiration_date(project_id, expiration_date):
-    dates = get_expiration_dates()
-    dates[project_id] = expiration_date
-    with open('/etc/openstack-dashboard/dair-expiration.txt', 'w') as f:
-        for k, v in dates.iteritems():
-            f.write("%s:%s\n" % (k,v))
-
-def get_start_dates():
-    dates = {}
-    with open('/etc/openstack-dashboard/start-dates.txt') as f:
-        for line in f:
-            line = line.strip()
-            if line != "":
-                foo = line.split(':')
-                dates[foo[0]] = foo[1]
-    return dates
+    try:
+        db = _dbconnect()
+        c = db.cursor()
+        expiration_date = parser.parse(expiration_date)
+        query = "INSERT INTO project_information (project_id, expiration_date) VALUES (%s, %s) ON DUPLICATE KEY UPDATE expiration_date = %s"
+        data = (project_id, expiration_date, expiration_date)
+        c.execute(query, data)
+        db.commit()
+    except Exception as e:
+        print(str(e))
 
 def get_start_date(project_id):
-    dates = get_start_dates()
-    if project_id in dates:
-        return dates[project_id]
-    else:
+    try:
+        db = _dbconnect()
+        c = db.cursor()
+        query = "SELECT date_format(start_date, '%%M %%d, %%Y') from project_information where project_id = %s"
+        data = (project_id)
+        c.execute(query, data)
+        date = c.fetchone()
+        if date is not None:
+            return date[0]
         return "Information not available."
+    except MySQLdb.Error, e:
+        print(str(e))
+        return "Information not available..."
 
 def set_start_date(project_id, start_date):
-    dates = get_start_dates()
-    dates[project_id] = start_date
-    with open('/etc/openstack-dashboard/start-dates.txt', 'w') as f:
-        for k, v in dates.iteritems():
-            f.write("%s:%s\n" % (k,v))
-
-def get_dair_notices():
-    notices = {}
-    with open('/etc/openstack-dashboard/dair-notices.txt') as f:
-        for line in f:
-            line = line.strip()
-            if line != "":
-              foo = line.split('::')
-              notices[foo[0]] = foo[1]
-    return notices
+    try:
+        db = _dbconnect()
+        c = db.cursor()
+        start_date = parser.parse(start_date)
+        query = "INSERT INTO project_information (project_id, start_date) VALUES (%s, %s) ON DUPLICATE KEY UPDATE start_date = %s"
+        data = (project_id, start_date, start_date)
+        c.execute(query, data)
+        db.commit()
+    except Exception as e:
+        print(str(e))
 
 def get_dair_notice(project_id):
-    notices = get_dair_notices()
-    if project_id in notices:
-        return notices[project_id]
-    else:
+    try:
+        db = _dbconnect()
+        c = db.cursor()
+        query = "SELECT notice from project_information where project_id = %s"
+        data = (project_id)
+        c.execute(query, data)
+        notice = c.fetchone()
+        if notice is not None:
+            return notice[0]
         return ""
+    except MySQLdb.Error, e:
+        print(str(e))
+        return "Information not available..."
 
 def set_dair_notice(project_id, notice, is_admin_notice):
-    notices = get_dair_notices()
-    notices[project_id] = notice
-    with open('/etc/openstack-dashboard/dair-notices.txt', 'w') as f:
-        for k, v in notices.iteritems():
-            f.write("%s::%s\n" % (k,v))
-    if is_admin_notice and notice != 'Information not available.':
-        with open('/etc/openstack-dashboard/dair-admin-notice.txt', 'w') as f:
-            f.write(notice)
-
-def get_dair_notice_links():
-    links = {}
-    with open('/etc/openstack-dashboard/dair-notice-links.txt') as f:
-        for line in f:
-            line = line.strip()
-            if line != "":
-              foo = line.split('::')
-              links[foo[0]] = foo[1]
-    return links
+    try:
+        if is_admin_notice:
+            project_id = 'admin'
+        db = _dbconnect()
+        c = db.cursor()
+        query = "INSERT INTO project_information (project_id, notice) VALUES (%s, %s) ON DUPLICATE KEY UPDATE notice = %s"
+        data = (project_id, notice, notice)
+        c.execute(query, data)
+        db.commit()
+    except Exception as e:
+        print(str(e))
 
 def get_dair_notice_link(project_id):
-    links = get_dair_notice_links()
-    if project_id in links:
-        return links[project_id]
-    else:
+    try:
+        db = _dbconnect()
+        c = db.cursor()
+        query = "SELECT notice_link from project_information where project_id = %s"
+        data = (project_id)
+        c.execute(query, data)
+        notice_link = c.fetchone()
+        if notice_link is not None:
+            return notice_link[0]
         return ""
+    except MySQLdb.Error, e:
+        print(str(e))
+        return "Information not available..."
 
 def set_dair_notice_link(project_id, link, is_admin_notice):
-    links = get_dair_notice_links()
-    links[project_id] = link
-    with open('/etc/openstack-dashboard/dair-notice-links.txt', 'w') as f:
-        for k, v in links.iteritems():
-            f.write("%s::%s\n" % (k,v))
-    if is_admin_notice and link != 'Information not available.':
-        with open('/etc/openstack-dashboard/dair-admin-notice-link.txt', 'w') as f:
-            f.write(link)
+    try:
+        if is_admin_notice:
+            project_id = 'admin'
+        db = _dbconnect()
+        c = db.cursor()
+        query = "INSERT INTO project_information (project_id, notice_link) VALUES (%s, %s) ON DUPLICATE KEY UPDATE notice_link = %s"
+        data = (project_id, link, link)
+        c.execute(query, data)
+        db.commit()
+    except Exception as e:
+        print(str(e))
 
 def get_dair_admin_notice():
-  with open('/etc/openstack-dashboard/dair-admin-notice.txt') as f:
-    for line in f:
-      return line.strip()
+    try:
+        db = _dbconnect()
+        c = db.cursor()
+        query = "SELECT notice from project_information where project_id = 'admin'"
+        c.execute(query)
+        notice = c.fetchone()
+        if notice is not None:
+            return notice[0]
+        return None
+    except MySQLdb.Error, e:
+        print(str(e))
+        return "Information not available..."
 
 def get_dair_admin_notice_link():
-  with open('/etc/openstack-dashboard/dair-admin-notice-link.txt') as f:
-    for line in f:
-      return line.strip()
+    try:
+        db = _dbconnect()
+        c = db.cursor()
+        query = "SELECT notice_link from project_information where project_id = 'admin'"
+        c.execute(query)
+        notice_link = c.fetchone()
+        if notice_link is not None and notice_link[0] != "":
+            return notice_link[0]
+        return None
+    except MySQLdb.Error, e:
+        print(str(e))
+        return "Information not available..."
 
 def get_reseller_logos():
     logos = {}
@@ -160,8 +197,7 @@ def get_reseller_logo(domain):
     if domain not in ['nova-ab', 'nova-qc', 'nova-hl', 'nova-mi']:
         if os.path.isfile('/usr/share/openstack-dashboard/openstack_dashboard/static/dashboard/img/%s.png' % domain):
             return '%s.png' % domain
-        else:
-            return "Information not available."
+        return "Information not available."
     return "Information not available."
 
 def set_reseller_logo(project_id, logo):
@@ -176,8 +212,7 @@ def get_reseller_splash(domain):
     if domain not in ['nova-ab', 'nova-qc', 'nova-hl', 'nova-mi']:
         if os.path.isfile('/usr/share/openstack-dashboard/openstack_dashboard/static/dashboard/img/%s-splash.png' % domain):
             return '%s-splash.png' % domain
-        else:
-            return "Information not available."
+        return "Information not available."
     return "Information not available."
 
 def get_used_resources(project_id):
