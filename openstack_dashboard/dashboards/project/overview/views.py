@@ -71,7 +71,10 @@ class ProjectOverview(usage.UsageView):
         self.usage.limits['start_date'] = api.jt.get_start_date(project_id)
 
         # dair notice
-        self.usage.limits['dair_notice'] = api.jt.get_dair_notice(project_id)
+        dair_notice = api.jt.get_dair_notice(project_id)
+        dair_notice = dair_notice.strip()
+        if dair_notice != "":
+            self.usage.limits['dair_notice'] = dair_notice
 
         # object storage
         object_mb_usage = api.jt.get_object_mb_usage(project_id)
