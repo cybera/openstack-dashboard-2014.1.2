@@ -34,7 +34,8 @@ class GraphLink(tables.LinkAction):
 
     def get_link_url(self, instance):
       print instance.tenant_id
-      return "http://graphite.dair-atir.canarie.ca/grafana/#/dashboard/script/dair-instance.js?project=%s&instance=%s" % (instance.tenant_id, instance.id)
+      #return "http://graphite.dair-atir.canarie.ca/grafana/#/dashboard/script/dair-instance.js?project=%s&instance=%s" % (instance.tenant_id, instance.id)
+      return "http://grafana.dair-atir.canarie.ca/dashboard/db/real-usage-per-instance?var-project=%s&var-instance=%s" % (instance.tenant_id, instance.id)
 
 class AdminEditInstance(project_tables.EditInstance):
     url = "horizon:admin:instances:update"
