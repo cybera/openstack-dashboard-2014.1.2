@@ -28,6 +28,12 @@ class BasePanels(horizon.PanelGroup):
               'images',
               'access_and_security',)
 
+class DAIRUsagePanels(horizon.PanelGroup):
+    slug = "dair_usage"
+    name = "DAIR Usage"
+    panels = ('dair_usage',)
+
+
 
 class NetworkPanels(horizon.PanelGroup):
     slug = "network"
@@ -67,6 +73,7 @@ class Project(horizon.Dashboard):
         NetworkPanels,
         ObjectStorePanels,
         OrchestrationPanels,
+        DAIRUsagePanels,
         DatabasePanels,)
     default_panel = 'overview'
     supports_tenants = True
