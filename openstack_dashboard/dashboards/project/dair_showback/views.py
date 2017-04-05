@@ -1,0 +1,76 @@
+from django.conf import settings
+from django.template.defaultfilters import capfirst  # noqa
+from django.template.defaultfilters import floatformat  # noqa
+from django.utils.translation import ugettext_lazy as _
+from django.views.generic import TemplateView  # noqa
+from django import http
+from django.http import HttpResponse
+
+from horizon.utils import csvbase
+from horizon import forms
+from horizon import tabs
+
+from openstack_dashboard import api
+
+import csv
+import requests
+import sys
+
+class DAIRShowbackView(TemplateView):
+    template_name = 'project/dair_showback/index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(DAIRShowbackView, self).get_context_data(**kwargs)
+        context['form'] = forms.DateForm()
+        project_id = self.request.user.tenant_id
+
+        start_date = self.request.GET.get('start')
+        context['start_date'] = start_date
+        end_date = self.request.GET.get('end')
+        context['end_date'] = end_date
+
+        if start_date and end_date:
+            usage = {}
+            usage['Instances'] = api.jt.get_dair_nova_showback_usage(project_id, start_date, end_date)
+            usage['Snapshots'] = api.jt.get_dair_glance_showback_usage(project_id, start_date, end_date)
+            usage['Volumes'] = api.jt.get_dair_cinder_showback_usage(project_id, start_date, end_date)
+            context['usage'] = usage
+
+            grand_total = usage['Instances']['total_cost']
+            grand_total += usage['Snapshots']['total_cost']
+            grand_total += usage['Volumes']['total_cost']
+            context['grand_total'] = grand_total
+        return context
+
+class DAIRShowbackCSVView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        project_id = self.request.user.tenant_id
+        start_date = self.request.GET.get('start')
+        end_date = self.request.GET.get('end')
+
+        if start_date and end_date:
+            usage = {}
+            usage['Instances'] = api.jt.get_dair_nova_showback_usage(project_id, start_date, end_date)
+            usage['Snapshots'] = api.jt.get_dair_glance_showback_usage(project_id, start_date, end_date)
+            usage['Volumes'] = api.jt.get_dair_cinder_showback_usage(project_id, start_date, end_date)
+
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="usage.csv"'
+            w = csv.writer(response)
+            for k, v in usage['Instances'].iteritems():
+                if k == 'total_cost':
+                    continue
+                w.writerow([k, v['hours'], v['count'], v['cost']])
+            for k, v in usage['Snapshots'].iteritems():
+                if k == 'total_cost':
+                    continue
+                w.writerow([k, v['hours'], v['size'], v['cost']])
+            for k, v in usage['Volumes'].iteritems():
+                if k == 'total_cost':
+                    continue
+                w.writerow([k, v['hours'], v['size'], v['cost']])
+
+            return response
+
+class WarningView(TemplateView):
+    template_name = "project/_warning.html"

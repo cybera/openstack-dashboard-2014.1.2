@@ -5,11 +5,13 @@ import MySQLdb
 
 import glance
 
-def _dbconnect():
+def _dbconnect(db=None):
     username = getattr(settings, 'DAIR_MYSQL_USERNAME')
     password = getattr(settings, 'DAIR_MYSQL_PASSWORD')
     host = getattr(settings, 'DAIR_MYSQL_HOST')
-    return MySQLdb.connect(host=host,user=username,passwd=password,db='dair_information')
+    if db == None:
+        db = 'dair_information'
+    return MySQLdb.connect(host=host,user=username,passwd=password,db=db)
 
 def get_image_quota(project_id):
     import subprocess
@@ -226,3 +228,104 @@ def get_used_resources(project_id):
             (resource, used) = r.split(' ')
             resources[resource] = used
     return resources
+
+def get_dair_nova_showback_usage(tenant, start, end):
+    usage = {}
+    try:
+        prices = getattr(settings, 'DAIR_SHOWBACK_PRICES')
+        total_cost = 0
+        start_date = parser.parse(start)
+        end_date = parser.parse(end)
+        db = _dbconnect('nova')
+        c = db.cursor()
+        query = "SELECT i.created_at, i.deleted_at, it.name FROM instances AS i LEFT JOIN instance_types AS it ON i.instance_type_id=it.id WHERE i.project_id = %s AND i.created_at < %s AND (i.deleted_at > %s OR i.deleted_at IS NULL)"
+        data = (tenant, end_date, start_date)
+        c.execute(query, data)
+        rows = c.fetchall()
+        for row in rows:
+            start_date = row[0]
+            flavor_name = row[2]
+            if row[1]:
+                end_date = row[1]
+            hours = abs(int((end_date - start_date).total_seconds() / 60 / 60))
+
+            if flavor_name in prices['nova']:
+                flavor_cost = prices['nova'][flavor_name]
+            else:
+                flavor_cost = 0
+            if flavor_name in usage:
+                usage[flavor_name]['count'] += 1
+                usage[flavor_name]['hours'] += hours
+                usage[flavor_name]['cost'] += float("%.2f" % (flavor_cost * hours))
+                total_cost += float("%.2f" % (flavor_cost * hours))
+            else:
+                usage[flavor_name] = {}
+                usage[flavor_name]['count'] = 1
+                usage[flavor_name]['hours'] = hours
+                usage[flavor_name]['cost'] = float("%.2f" % (flavor_cost * hours))
+                total_cost += usage[flavor_name]['cost']
+        usage['total_cost'] = total_cost
+    except MySQLdb.Error, e:
+        print(str(e))
+        return "Information not available..."
+    return usage
+
+def get_dair_glance_showback_usage(tenant, start, end):
+    usage = {}
+    try:
+        prices = getattr(settings, 'DAIR_SHOWBACK_PRICES')
+        total_cost = 0
+        start_date = parser.parse(start)
+        end_date = parser.parse(end)
+        db = _dbconnect('glance')
+        c = db.cursor()
+        query = "SELECT created_at, deleted_at, name, size FROM images WHERE owner = %s AND created_at < %s AND (deleted_at > %s OR deleted_at IS NULL) AND status != 'killed'"
+        data = (tenant, end_date, start_date)
+        c.execute(query, data)
+        rows = c.fetchall()
+        for row in rows:
+            start_date = row[0]
+            name = row[2]
+            if row[1]:
+                end_date = row[1]
+            hours = int((end_date - start_date).total_seconds() / 60 / 60)
+            usage[name] = {}
+            usage[name]['hours'] = hours
+            usage[name]['size'] = row[3] / 1024 / 1024 / 1024.0
+            usage[name]['cost'] = float("%.2f" % (usage[name]['size'] * hours * prices['glance']))
+            total_cost += usage[name]['cost']
+        usage['total_cost'] = total_cost
+    except MySQLdb.Error, e:
+        print(str(e))
+        return "Information not available..."
+    return usage
+
+def get_dair_cinder_showback_usage(tenant, start, end):
+    usage = {}
+    try:
+        prices = getattr(settings, 'DAIR_SHOWBACK_PRICES')
+        total_cost = 0
+        start_date = parser.parse(start)
+        end_date = parser.parse(end)
+        db = _dbconnect('cinder')
+        c = db.cursor()
+        query = "SELECT created_at, deleted_at, display_name, size FROM volumes WHERE project_id = %s AND created_at < %s AND (deleted_at > %s OR deleted_at IS NULL)"
+        data = (tenant, end_date, start_date)
+        c.execute(query, data)
+        rows = c.fetchall()
+        for row in rows:
+            start_date = row[0]
+            name = row[2]
+            if row[1]:
+                end_date = row[1]
+            hours = int((end_date - start_date).total_seconds() / 60 / 60)
+            usage[name] = {}
+            usage[name]['hours'] = hours
+            usage[name]['size'] = row[3]
+            usage[name]['cost'] = float("%.2f" % (usage[name]['size'] * hours * prices['cinder']))
+            total_cost += usage[name]['cost']
+        usage['total_cost'] = total_cost
+    except MySQLdb.Error, e:
+        print(str(e))
+        return "Information not available..."
+    return usage
