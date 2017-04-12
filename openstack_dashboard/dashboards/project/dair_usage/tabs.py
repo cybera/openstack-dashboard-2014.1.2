@@ -49,11 +49,11 @@ class DAIRInstanceUsageTab(tabs.Tab):
             ('90 Days', '90d'),
         ]
         queries = [
-            ('CPU Time (Seconds)', 'instance_actual_cpu_time'),
-            ('Memory Usage', 'instance_actual_memory'),
-            ('Network (Bytes)', 'instance_actual_network_bytes'),
-            ('Disk Usage', 'instance_actual_disk_usage'),
-            ('Disk IO', 'instance_actual_disk_io'),
+            ('CPU Time (Seconds)', 'A sum of the number of seconds a CPU is active in a 5 minute period. A higher value denotes higher CPU usage.','instance_actual_cpu_time'),
+            ('Memory Usage','The total amount of memory consumed by the instance.', 'instance_actual_memory'),
+            ('Network (Bytes)','The total bandwidth used in bytes. This does not differentiate between external or internal traffic.', 'instance_actual_network_bytes'),
+            ('Disk Usage', 'Size of the root disk.','instance_actual_disk_usage'),
+            ('Disk IO', 'The number of input/output operations on a physical disk.','instance_actual_disk_io'),
         ]
         context['time'] = time
         context['queries'] = queries

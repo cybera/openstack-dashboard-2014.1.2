@@ -25,8 +25,9 @@
 </form>
 
 {% if request.GET.instance %}
-{% for query_title, query in queries %}
+{% for query_title, query_comment, query in queries %}
 <h3>{{ query_title }}</h3>
+<p>{{ query_comment }}</p>
 <img src="instance_data?query={{ query }}&instance={{ request.GET.instance }}&from={{ request.GET.from }}">
 <br>
 <br>
