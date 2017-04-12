@@ -30,94 +30,119 @@
       <h3>Instances</h3>
       <table cellpadding="0" cellspacing="0">
         <tr class="heading">
-          <td width="60%">Flavor</td>
+          <!-- <td width="60%">Flavor</td> -->
+          <td width="70%">Flavor</td>
           <td width="15%">Qty</td>
           <td>Hours</td>
-          <td>Price</td>
+          <!--  <td>Price</td> -->
         </tr>
         {% for k,v in usage.Instances.items %}
-        {% if k != "total_cost" %}
+        <!-- {% if k != "total_cost" %} -->
         <tr class="item">
           <td>{{ k }}</td>
           <td>{{ v.count }}</td>
           <td>{{ v.hours }}</td>
-          <td>${{ v.cost|floatformat:2 }}</td>
+          <!-- <td>${{ v.cost|floatformat:2 }}</td > -->
         </tr>
-        {% endif %}
+        <!-- {% endif %} -->
         {% endfor %}
-        <tr class="total">
+        <!--  <tr class="total">
           <td></td>
           <td></td>
           <td></td>
           <td>Total: ${{ usage.Instances.total_cost|floatformat:2 }}</td>
+        </tr> -->
+      </table>
+
+      <a href="/project/dair_showback/csv_instances?start={{ start_date }}&end={{ end_date }}">Download CSV</a>
+      <p></p>
+
+      <h3>External Bandwidth</h3>
+      <table cellpadding="0" cellspacing="0">
+      <tr class="heading">
+          <td width="70%"></td>
+          <td width="15%">Received(Mb)</td>
+          <td>Transmitted(Mb)</td>
         </tr>
+        {% for k,v in usage.Bandwidth.items %}
+          <tr class="item">
+            <td></td>
+            <td>{{ v.bytes_received }}</td>
+            <td>{{ v.bytes_transmitted }}</td>
+          </tr>
+        {% endfor %}
       </table>
 
       <br>
+
       <h3>Snapshots</h3>
       <table cellpadding="0" cellspacing="0">
         <tr class="heading">
-          <td width="60%">Name</td>
+          <!--<td width="60%">Name</td> -->
+          <td width="70%">Name</td>
           <td width="15%">Hours</td>
-          <td>Size</td>
-          <td>Price</td>
+          <td>Size(Gb)</td>
+          <!-- <td>Price</td> -->
         <tr>
         {% for k,v in usage.Snapshots.items %}
-        {% if k != "total_cost" %}
+        <!-- {% if k != "total_cost" %} -->
           <tr class="item">
             <td>{{ k }}</td>
             <td>{{ v.hours }}</td>
             <td>{{ v.size|floatformat:2 }}</td>
-            <td>${{ v.cost|floatformat:2 }}</td>
+            <!-- <td>${{ v.cost|floatformat:2 }}</td> -->
           </tr>
-        {% endif %}
+          <!-- {% endif %} -->
         {% endfor %}
-        <tr class="total">
+        <!-- <tr class="total">
           <td></td>
           <td></td>
           <td></td>
           <td>Total: ${{ usage.Snapshots.total_cost|floatformat:2 }}</td>
-        </tr>
+        </tr> -->
       </table>
 
-      <br>
+      <a href="/project/dair_showback/csv_snapshots?start={{ start_date }}&end={{ end_date }}">Download CSV</a>
+      <p></p>
+
       <h3>Volumes</h3>
       <table cellpadding="0" cellspacing="0">
         <tr class="heading">
-          <td width="60%">Name</td>
+          <!-- <td width="60%">Name</td> -->
+          <td width="70%">Name</td>
           <td width="15%">Hours</td>
-          <td>Size</td>
-          <td>Price</td>
+          <td>Size(Gb)</td>
+          <!-- <td>Price</td> -->
         <tr>
         {% for k,v in usage.Volumes.items %}
-        {% if k != "total_cost" %}
+        <!-- {% if k != "total_cost" %} -->
         <tr class="item">
           <td>{{ k }}</td>
           <td>{{ v.hours }}</td>
           <td>{{ v.size|floatformat:2 }}</td>
-          <td>${{ v.cost|floatformat:2 }}</td>
+          <!-- <td>${{ v.cost|floatformat:2 }}</td> -->
         </tr>
-        {% endif %}
+        <!--{% endif %} -->
         {% endfor %}
-        <tr class="total">
+        <!-- <tr class="total">
           <td></td>
           <td></td>
           <td></td>
           <td>Total: ${{ usage.Volumes.total_cost|floatformat:2 }}</td>
-        </tr>
+        </tr> -->
       </table>
 
-      <br>
+     <!-- <br>
       <table cellpadding="0" cellspacing="0">
-        <tr class="total">
+       <tr class="total">
           <td width="70%"><b>Total</b></td>
           <td></td>
           <td></td>
           <td>${{ grand_total|floatformat:2 }}</td>
         </tr>
-      </table>
+      </table> -->
 
-      <a href="/project/dair_showback/csv?start={{ start_date }}&end={{ end_date }}">Download CSV</a>
+      <a href="/project/dair_showback/csv_volumes?start={{ start_date }}&end={{ end_date }}">Download CSV</a>
     </div>
 {% endif %}
 {% endblock %}

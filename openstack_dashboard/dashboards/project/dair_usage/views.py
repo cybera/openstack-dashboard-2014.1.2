@@ -29,10 +29,10 @@ class DAIRProjectData(TemplateView):
         base_url = 'http://%s:8180/render?from=-%s&width=800&format=%s&target=' % (graphite_server, from_date, data_format)
         query_results = {}
         queries = {
-            'project_allocated_instances': "aliasByNode(keepLastValue(projects.%s.cloud_usage.*.instances), 3)" % project_id,
-            'project_allocated_cpu': "aliasByNode(keepLastValue(projects.%s.cloud_usage.*.cpu), 3)" % project_id,
-            'project_allocated_memory': "aliasByNode(keepLastValue(projects.%s.cloud_usage.*.memory), 3)" % project_id,
-            'project_allocated_ephemeral_disk': "aliasByNode(keepLastValue(projects.%s.cloud_usage.*.disk), 3)" % project_id,
+            'project_allocated_instances': "aliasByNode(keepLastValue(projects.%s.cloud_usage*.instances), 3)" % project_id,
+            'project_allocated_cpu': "aliasByNode(keepLastValue(projects.%s.cloud_usage*.cpu), 3)" % project_id,
+            'project_allocated_memory': "aliasByNode(keepLastValue(projects.%s.cloud_usage*.memory), 3)" % project_id,
+            'project_allocated_ephemeral_disk': "aliasByNode(keepLastValue(projects.%s.cloud_usage*.disk), 3)" % project_id,
         }
 
         query = self.request.GET.get('query', False)

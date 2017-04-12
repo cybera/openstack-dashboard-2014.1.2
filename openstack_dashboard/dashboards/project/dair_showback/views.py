@@ -31,18 +31,19 @@ class DAIRShowbackView(TemplateView):
 
         if start_date and end_date:
             usage = {}
+            usage['Bandwidth'] = api.jt.get_dair_bandwidth_showback_usage(project_id, start_date, end_date)
             usage['Instances'] = api.jt.get_dair_nova_showback_usage(project_id, start_date, end_date)
             usage['Snapshots'] = api.jt.get_dair_glance_showback_usage(project_id, start_date, end_date)
             usage['Volumes'] = api.jt.get_dair_cinder_showback_usage(project_id, start_date, end_date)
             context['usage'] = usage
 
-            grand_total = usage['Instances']['total_cost']
-            grand_total += usage['Snapshots']['total_cost']
-            grand_total += usage['Volumes']['total_cost']
-            context['grand_total'] = grand_total
+        #    grand_total = usage['Instances']['total_cost']
+        #    grand_total += usage['Snapshots']['total_cost']
+        #    grand_total += usage['Volumes']['total_cost']
+        #    context['grand_total'] = grand_total
         return context
 
-class DAIRShowbackCSVView(TemplateView):
+class DAIRShowbackCSV_instancesView(TemplateView):
     def get(self, request, *args, **kwargs):
         project_id = self.request.user.tenant_id
         start_date = self.request.GET.get('start')
@@ -51,24 +52,60 @@ class DAIRShowbackCSVView(TemplateView):
         if start_date and end_date:
             usage = {}
             usage['Instances'] = api.jt.get_dair_nova_showback_usage(project_id, start_date, end_date)
+
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="instances.csv"'
+            w = csv.writer(response)
+            w.writerow(["Flavor","Qty","Hours"])
+            for k, v in usage['Instances'].iteritems():
+               # if k == 'total_cost':
+               #     continue
+               #    w.writerow([k, v['hours'], v['count'], v['cost']])
+                w.writerow([k, v['hours'], v['count']])
+
+            return response
+
+class DAIRShowbackCSV_snapshotsView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        project_id = self.request.user.tenant_id
+        start_date = self.request.GET.get('start')
+        end_date = self.request.GET.get('end')
+
+        if start_date and end_date:
+            usage = {}
             usage['Snapshots'] = api.jt.get_dair_glance_showback_usage(project_id, start_date, end_date)
+
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="snapshots.csv"'
+            w = csv.writer(response)
+            w.writerow(["Name","Hours","Size(Gb)"])
+            for k, v in usage['Snapshots'].iteritems():
+            #    if k == 'total_cost':
+            #        continue
+            #    w.writerow([k, v['hours'], v['size'], v['cost']])
+                w.writerow([k, v['hours'], v['size']])
+
+            return response
+
+class DAIRShowbackCSV_volumesView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        project_id = self.request.user.tenant_id
+        start_date = self.request.GET.get('start')
+        end_date = self.request.GET.get('end')
+
+        if start_date and end_date:
+            usage = {}
             usage['Volumes'] = api.jt.get_dair_cinder_showback_usage(project_id, start_date, end_date)
 
             response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="usage.csv"'
+            response['Content-Disposition'] = 'attachment; filename="volumes.csv"'
             w = csv.writer(response)
-            for k, v in usage['Instances'].iteritems():
-                if k == 'total_cost':
-                    continue
-                w.writerow([k, v['hours'], v['count'], v['cost']])
-            for k, v in usage['Snapshots'].iteritems():
-                if k == 'total_cost':
-                    continue
-                w.writerow([k, v['hours'], v['size'], v['cost']])
+            w.writerow(["Name","Hours","Size(Gb)"])
             for k, v in usage['Volumes'].iteritems():
-                if k == 'total_cost':
-                    continue
-                w.writerow([k, v['hours'], v['size'], v['cost']])
+            #    if k == 'total_cost':
+            #        continue
+            #    w.writerow([k, v['hours'], v['size'], v['cost']])
+                w.writerow([k, v['hours'], v['size']])
 
             return response
 

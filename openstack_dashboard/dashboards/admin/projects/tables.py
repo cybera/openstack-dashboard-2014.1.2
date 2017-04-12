@@ -70,7 +70,9 @@ class GraphLink(tables.LinkAction):
     classes = ("btn-stats",)
 
     def get_link_url(self, project):
-      return "".join(["http://graphite.dair-atir.canarie.ca/grafana/#/dashboard/script/dair-project.js?project=", project.id])
+     #tm
+     #return "".join(["http://graphite.dair-atir.canarie.ca/grafana/#/dashboard/script/dair-project.js?project=", project.id])
+      return "".join(["http://grafana.dair-atir.canarie.ca:3000/dashboard/db/real-usage-project-total?var-project=", project.id])
 
 
 class CreateProject(tables.LinkAction):

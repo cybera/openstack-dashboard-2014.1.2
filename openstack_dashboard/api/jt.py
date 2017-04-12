@@ -2,8 +2,10 @@ from dateutil import parser
 from django.conf import settings
 from horizon import conf
 import MySQLdb
-
+from django import http
 import glance
+import requests
+import datetime
 
 def _dbconnect(db=None):
     username = getattr(settings, 'DAIR_MYSQL_USERNAME')
@@ -228,12 +230,35 @@ def get_used_resources(project_id):
             (resource, used) = r.split(' ')
             resources[resource] = used
     return resources
+def get_dair_bandwidth_showback_usage(tenant, start, end):
+    usage = {}
+    try:
+        start_date = parser.parse(start)
+        start_date=str(start_date)
+        start_date1 = datetime.datetime.strptime(start_date, '%Y-%m-%d %H:%M:%S')
+        start_date1 = start_date1.strftime('%H:%M%Y%m%d')
+        end_date = parser.parse(end)
+        end_date=str(end_date)
+        end_date1 = datetime.datetime.strptime(end_date, '%Y-%m-%d %H:%M:%S')
+        end_date1 = end_date1.strftime('%H:%M%Y%m%d')
+        graphite = getattr(settings, 'DAIR_GRAPHITE_SERVER')
+        query_bytes_received = "target=integral(nonNegativeDerivative(sumSeries(keepLastValue(projects.%s.*.network.total_bytes_received))))&from=%s&until=%s" % (tenant, start_date1, end_date1)
+        query_bytes_transmitted = "target=integral(nonNegativeDerivative(sumSeries(keepLastValue(projects.%s.*.network.total_bytes_transmitted))))&from=%s&until=%s" % (tenant, start_date1, end_date1)
+        bytes_received = requests.get ('http://'+graphite+':8180/render?'+query_bytes_received+'&format=json')
+        bytes_transmitted = requests.get ('http://'+graphite+':8180/render?'+query_bytes_transmitted+'&format=json')
+        usage[tenant] = {}
+        usage[tenant]['bytes_received'] = '%.2f' % round((bytes_received.json()[0][u'datapoints'][-1][0] /1024 /1024),2)
+        usage[tenant]['bytes_transmitted']= '%.2f' % round((bytes_transmitted.json()[0][u'datapoints'][-1][0] /1024 /1024),2)
+    except Exception as e:
+        print(str(e))
+        return "Information not available..."
+    return usage
 
 def get_dair_nova_showback_usage(tenant, start, end):
     usage = {}
     try:
-        prices = getattr(settings, 'DAIR_SHOWBACK_PRICES')
-        total_cost = 0
+    #    prices = getattr(settings, 'DAIR_SHOWBACK_PRICES')
+    #    total_cost = 0
         start_date = parser.parse(start)
         end_date = parser.parse(end)
         db = _dbconnect('nova')
@@ -248,23 +273,23 @@ def get_dair_nova_showback_usage(tenant, start, end):
             if row[1]:
                 end_date = row[1]
             hours = abs(int((end_date - start_date).total_seconds() / 60 / 60))
-
-            if flavor_name in prices['nova']:
-                flavor_cost = prices['nova'][flavor_name]
-            else:
-                flavor_cost = 0
+        #tm
+        #    if flavor_name in prices['nova']:
+        #        flavor_cost = prices['nova'][flavor_name]
+        #    else:
+        #        flavor_cost = 0
             if flavor_name in usage:
                 usage[flavor_name]['count'] += 1
                 usage[flavor_name]['hours'] += hours
-                usage[flavor_name]['cost'] += float("%.2f" % (flavor_cost * hours))
-                total_cost += float("%.2f" % (flavor_cost * hours))
+         #       usage[flavor_name]['cost'] += float("%.2f" % (flavor_cost * hours))
+         #       total_cost += float("%.2f" % (flavor_cost * hours))
             else:
                 usage[flavor_name] = {}
                 usage[flavor_name]['count'] = 1
                 usage[flavor_name]['hours'] = hours
-                usage[flavor_name]['cost'] = float("%.2f" % (flavor_cost * hours))
-                total_cost += usage[flavor_name]['cost']
-        usage['total_cost'] = total_cost
+          #      usage[flavor_name]['cost'] = float("%.2f" % (flavor_cost * hours))
+          #      total_cost += usage[flavor_name]['cost']
+       # usage['total_cost'] = total_cost
     except MySQLdb.Error, e:
         print(str(e))
         return "Information not available..."
@@ -273,8 +298,8 @@ def get_dair_nova_showback_usage(tenant, start, end):
 def get_dair_glance_showback_usage(tenant, start, end):
     usage = {}
     try:
-        prices = getattr(settings, 'DAIR_SHOWBACK_PRICES')
-        total_cost = 0
+       # prices = getattr(settings, 'DAIR_SHOWBACK_PRICES')
+       # total_cost = 0
         start_date = parser.parse(start)
         end_date = parser.parse(end)
         db = _dbconnect('glance')
@@ -292,9 +317,9 @@ def get_dair_glance_showback_usage(tenant, start, end):
             usage[name] = {}
             usage[name]['hours'] = hours
             usage[name]['size'] = row[3] / 1024 / 1024 / 1024.0
-            usage[name]['cost'] = float("%.2f" % (usage[name]['size'] * hours * prices['glance']))
-            total_cost += usage[name]['cost']
-        usage['total_cost'] = total_cost
+        #    usage[name]['cost'] = float("%.2f" % (usage[name]['size'] * hours * prices['glance']))
+        #    total_cost += usage[name]['cost']
+        #usage['total_cost'] = total_cost
     except MySQLdb.Error, e:
         print(str(e))
         return "Information not available..."
@@ -303,8 +328,8 @@ def get_dair_glance_showback_usage(tenant, start, end):
 def get_dair_cinder_showback_usage(tenant, start, end):
     usage = {}
     try:
-        prices = getattr(settings, 'DAIR_SHOWBACK_PRICES')
-        total_cost = 0
+        #prices = getattr(settings, 'DAIR_SHOWBACK_PRICES')
+        #total_cost = 0
         start_date = parser.parse(start)
         end_date = parser.parse(end)
         db = _dbconnect('cinder')
@@ -322,9 +347,9 @@ def get_dair_cinder_showback_usage(tenant, start, end):
             usage[name] = {}
             usage[name]['hours'] = hours
             usage[name]['size'] = row[3]
-            usage[name]['cost'] = float("%.2f" % (usage[name]['size'] * hours * prices['cinder']))
-            total_cost += usage[name]['cost']
-        usage['total_cost'] = total_cost
+         #   usage[name]['cost'] = float("%.2f" % (usage[name]['size'] * hours * prices['cinder']))
+         #   total_cost += usage[name]['cost']
+       # usage['total_cost'] = total_cost
     except MySQLdb.Error, e:
         print(str(e))
         return "Information not available..."
