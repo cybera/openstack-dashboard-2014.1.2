@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Adrien Cunin <adrien@adriencunin.fr>, 2014
 # Cédric Soulas <soulascedric@gmail.com>, 2014
@@ -4073,7 +4073,7 @@ msgstr "Gérer les règles des groupes de sécurité."
 
 #: dashboards/project/access_and_security/templates/access_and_security/security_groups/detail.html:6
 msgid "Manage Security Group Rules: "
-msgstr "Gérer les Règles du Groupe de Sécurité :"
+msgstr "Gérer les règles du Groupe de sécurité :"
 
 #: dashboards/project/containers/browsers.py:26
 msgid "Swift"
@@ -8450,7 +8450,7 @@ msgstr "Détails de l'instantané de volume:"
 #: dashboards/project/volumes/templates/volumes/volumes/attach.html:3
 #: dashboards/project/volumes/templates/volumes/volumes/attach.html:6
 msgid "Manage Volume Attachments"
-msgstr "Gérer les attachements de Volume"
+msgstr "Gérer les annexes du volume"
 
 #: dashboards/project/volumes/templates/volumes/volumes/_attach.html:14
 msgid "Attach To Instance"
@@ -9774,3 +9774,6 @@ msgstr "Go Heures Disque"
 #: usage/tables.py:54 usage/tables.py:83
 msgid "Usage"
 msgstr "Usage"
+
+msgid "Create Environment"
+msgstr "French Test"
