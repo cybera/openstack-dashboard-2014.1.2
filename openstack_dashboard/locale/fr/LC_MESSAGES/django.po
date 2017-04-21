@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # Adrien Cunin <adrien@adriencunin.fr>, 2014
 # Cédric Soulas <soulascedric@gmail.com>, 2014
@@ -24,6 +24,98 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#tm
+msgid "Hours"
+msgstr "Heures"
+
+msgid "7 Days"
+msgstr "7 jours"
+
+msgid "14 Days"
+msgstr "14 jours"
+
+msgid "30 Days"
+msgstr "30 jours"
+
+msgid "90 Days"
+msgstr "90 jours"
+
+msgid "DAIR Usage"
+msgstr "Utilisation de l'ATIR"
+
+msgid "Usage Graphs"
+msgstr "Graphiques"
+
+msgid "Showback"
+msgstr "Réaffichag"
+
+msgid "Instance Usage"
+msgstr "Utilisation des instances"
+
+msgid "Submit"
+msgstr "Soumettre"
+
+msgid "Memory (Gb)"
+msgstr "Mémoire(Go)"
+
+msgid "Ephemeral Disk (Gb)"
+msgstr "Disque éphémè(Go)"
+
+msgid "The following shows allocate usage of the cloud. It does not reflect actual usage of instances."
+msgstr "Montre comment le nuage est utilisé. Ne reflète pas l'usage réel des instanes."
+
+msgid "CPU Time (Seconds)"
+msgstr "Usage du CPU (secondes)"
+
+msgid "A sum of the number of seconds a CPU is active in a 5 minute period. A higher value denotes higher CPU usage."
+msgstr "Usage du CPU supérieur."
+
+msgid "The total amount of memory consumed by the instance."
+msgstr "Mémoire totale utilisée pa l'instance."
+
+msgid "Network (Bytes)"
+msgstr "Réseau(octets)"
+
+msgid "The total bandwidth used in bytes. This does not differentiate between external or internal traffic."
+msgstr "Débit total en octets. Ne distingue pas le trafic externe du trafic interne"
+
+msgid "Size of the root disk."
+msgstr "Taille du disque racine."
+
+msgid "Disk IO"
+msgstr "IO du disque"
+
+msgid "The number of input/output operations on a physical disk."
+msgstr "Nombre d'opérations entrée/sortie du disque physue."
+
+msgid "Select a period of time to query usage"
+msgstr "Choisir une période pour réafficher l'utilisati"
+
+msgid "The date should be in YYYY-mm-dd format."
+msgstr "Formater la date AAAA-mm-jj"
+
+msgid "External Bandwidth"
+msgstr "Débit extere"
+
+msgid "In (MB)"
+msgstr "Entrées (Mo)"
+
+msgid "In (Mb)"
+msgstr "Entrees (Mo)"
+
+msgid "Download CSV"
+msgstr "Téléchargeme CSV"
+
+msgid "Out (MB)"
+msgstr "Sorties (Mo)"
+
+msgid "Out (Mb)"
+msgstr "Sorties (Mo)"
+
+msgid "Object Storage"
+msgstr "Stockage d'objets"
+
 
 #: settings.py:85
 msgid "AKI - Amazon Kernel Image"

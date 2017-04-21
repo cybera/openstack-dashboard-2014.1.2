@@ -1,3 +1,5 @@
+{% load i18n %}
+
 <form name="instance_usage" method="GET" action="index">
   <select name="from">
     {% for from_label, from_value in time %}
@@ -21,7 +23,7 @@
 
   <input type="hidden" name="tab" value="dair_usage__instances">
 
-  <input type="submit">
+  <button type="submit">{%trans "Submit" %}</button>
 </form>
 
 {% if request.GET.instance %}

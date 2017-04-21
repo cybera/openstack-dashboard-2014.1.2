@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.template.defaultfilters import capfirst  # noqa
 from django.template.defaultfilters import floatformat  # noqa
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import ugettext as _
 from django.views.generic import TemplateView  # noqa
 from django import http
 from django.http import HttpResponse
@@ -56,12 +56,34 @@ class DAIRShowbackCSV_instancesView(TemplateView):
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="instances.csv"'
             w = csv.writer(response)
-            w.writerow(["Flavor","Qty","Hours"])
+            w.writerow([_("Flavor"),_("Qty"),_("Hours")])
             for k, v in usage['Instances'].iteritems():
                # if k == 'total_cost':
                #     continue
                #    w.writerow([k, v['hours'], v['count'], v['cost']])
                 w.writerow([k, v['hours'], v['count']])
+
+            return response
+
+class DAIRShowbackCSV_bandwidthView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        project_id = self.request.user.tenant_id
+        start_date = self.request.GET.get('start')
+        end_date = self.request.GET.get('end')
+
+        if start_date and end_date:
+            usage = {}
+            usage['Bandwidth'] = api.jt.get_dair_bandwidth_showback_usage(project_id, start_date, end_date)
+
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="bandwidth.csv"'
+            w = csv.writer(response)
+            w.writerow([_("In (Mb)"),_("Out (Mb)")])
+            for k, v in usage['Bandwidth'].iteritems():
+               # if k == 'total_cost':
+               #     continue
+               #    w.writerow([k, v['hours'], v['count'], v['cost']])
+                w.writerow([ v['bytes_received'], v['bytes_transmitted']])
 
             return response
 
@@ -78,7 +100,7 @@ class DAIRShowbackCSV_snapshotsView(TemplateView):
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="snapshots.csv"'
             w = csv.writer(response)
-            w.writerow(["Name","Hours","Size(Gb)"])
+            w.writerow([_("Name"),_("Hours"),_("Size (GB)")])
             for k, v in usage['Snapshots'].iteritems():
             #    if k == 'total_cost':
             #        continue
@@ -100,7 +122,7 @@ class DAIRShowbackCSV_volumesView(TemplateView):
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="volumes.csv"'
             w = csv.writer(response)
-            w.writerow(["Name","Hours","Size(Gb)"])
+            w.writerow([_("Name"),_("Hours"),_("Size (GB)")])
             for k, v in usage['Volumes'].iteritems():
             #    if k == 'total_cost':
             #        continue

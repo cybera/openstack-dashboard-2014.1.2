@@ -27,13 +27,13 @@
 {% if usage %}
   <h2>Usage from {{ start_date }} to {{ end_date }}</h2>
     <div class="invoice-box">
-      <h3>Instances</h3>
+      <h3>{%trans "Instances" %}</h3>
       <table cellpadding="0" cellspacing="0">
         <tr class="heading">
           <!-- <td width="60%">Flavor</td> -->
-          <td width="70%">Flavor</td>
-          <td width="15%">Qty</td>
-          <td>Hours</td>
+          <td width="70%">{%trans "Flavor" %}</td>
+          <td width="15%">{%trans "Qty" %}</td>
+          <td>{%trans "Hours" %}</td>
           <!--  <td>Price</td> -->
         </tr>
         {% for k,v in usage.Instances.items %}
@@ -54,15 +54,15 @@
         </tr> -->
       </table>
 
-      <a href="/project/dair_showback/csv_instances?start={{ start_date }}&end={{ end_date }}">Download CSV</a>
+      <a href="/project/dair_showback/csv_instances?start={{ start_date }}&end={{ end_date }}">{%trans "Download CSV" %}</a>
       <p></p>
 
-      <h3>External Bandwidth</h3>
+      <h3>{%trans "External Bandwidth" %}</h3>
       <table cellpadding="0" cellspacing="0">
       <tr class="heading">
           <td width="70%"></td>
-          <td width="15%">Received(Mb)</td>
-          <td>Transmitted(Mb)</td>
+          <td width="15%">{%trans "In (MB)" %}</td>
+          <td>{%trans "Out (MB)" %}</td>
         </tr>
         {% for k,v in usage.Bandwidth.items %}
           <tr class="item">
@@ -73,15 +73,16 @@
         {% endfor %}
       </table>
 
-      <br>
+      <a href="/project/dair_showback/csv_bandwidth?start={{ start_date }}&end={{ end_date }}">{%trans "Download CSV" %}</a>
+      <p></p>
 
-      <h3>Snapshots</h3>
+      <h3>{%trans "Snapshots" %}</h3>
       <table cellpadding="0" cellspacing="0">
         <tr class="heading">
           <!--<td width="60%">Name</td> -->
-          <td width="70%">Name</td>
-          <td width="15%">Hours</td>
-          <td>Size(Gb)</td>
+          <td width="70%">{%trans "Name" %}</td>
+          <td width="15%">{%trans "Hours" %}</td>
+          <td>{%trans "Size (GB)" %}</td>
           <!-- <td>Price</td> -->
         <tr>
         {% for k,v in usage.Snapshots.items %}
@@ -102,16 +103,16 @@
         </tr> -->
       </table>
 
-      <a href="/project/dair_showback/csv_snapshots?start={{ start_date }}&end={{ end_date }}">Download CSV</a>
+      <a href="/project/dair_showback/csv_snapshots?start={{ start_date }}&end={{ end_date }}">{%trans "Download CSV" %}</a>
       <p></p>
 
-      <h3>Volumes</h3>
+      <h3>{%trans "Volumes" %}</h3>
       <table cellpadding="0" cellspacing="0">
         <tr class="heading">
           <!-- <td width="60%">Name</td> -->
-          <td width="70%">Name</td>
-          <td width="15%">Hours</td>
-          <td>Size(Gb)</td>
+          <td width="70%">{%trans "Name" %}</td>
+          <td width="15%">{%trans "Hours" %}</td>
+          <td>{%trans "Size (GB)" %}</td>
           <!-- <td>Price</td> -->
         <tr>
         {% for k,v in usage.Volumes.items %}
@@ -142,7 +143,7 @@
         </tr>
       </table> -->
 
-      <a href="/project/dair_showback/csv_volumes?start={{ start_date }}&end={{ end_date }}">Download CSV</a>
+     <a href="/project/dair_showback/csv_volumes?start={{ start_date }}&end={{ end_date }}">{%trans "Download CSV" %}</a>
     </div>
 {% endif %}
 {% endblock %}

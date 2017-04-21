@@ -30,7 +30,7 @@ class BasePanels(horizon.PanelGroup):
 
 class DAIRUsagePanels(horizon.PanelGroup):
     slug = "dair_usage"
-    name = "DAIR Usage"
+    name = _("DAIR Usage")
     panels = ('dair_usage',
               'dair_showback',)
 

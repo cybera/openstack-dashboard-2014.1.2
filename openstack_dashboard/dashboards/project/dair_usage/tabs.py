@@ -7,7 +7,7 @@ from openstack_dashboard import api
 import requests
 
 class DAIRProjectUsageTab(tabs.Tab):
-    name = "Project Usage"
+    name = _("Project Usage")
     slug = "project"
     template_name = "project/dair_usage/project_usage.html"
     preload = False
@@ -15,16 +15,16 @@ class DAIRProjectUsageTab(tabs.Tab):
     def get_context_data(self, request):
         context = {}
         time = [
-            ('7 Days', '7d'),
-            ('14 Days', '14d'),
-            ('30 Days', '30d'),
-            ('90 Days', '90d'),
+            (_('7 Days'), '7d'),
+            (_('14 Days'), '14d'),
+            (_('30 Days'), '30d'),
+            (_('90 Days'), '90d'),
         ]
         queries = [
-            ('Instances', 'project_allocated_instances'),
-            ('CPU', 'project_allocated_cpu'),
-            ('Memory (gb)', 'project_allocated_memory'),
-            ('Ephemeral Disk (gb)', 'project_allocated_ephemeral_disk')
+            (_('Instances'), 'project_allocated_instances'),
+            (_('CPU'), 'project_allocated_cpu'),
+            (_('Memory (Gb)'), 'project_allocated_memory'),
+            (_('Ephemeral Disk (Gb)'), 'project_allocated_ephemeral_disk')
         ]
 
         context['time'] = time
@@ -33,7 +33,7 @@ class DAIRProjectUsageTab(tabs.Tab):
         return context
 
 class DAIRInstanceUsageTab(tabs.Tab):
-    name = "Instance Usage"
+    name =_("Instance Usage")
     slug = "instances"
     template_name = "project/dair_usage/instance_usage.html"
     preload = False
@@ -43,17 +43,17 @@ class DAIRInstanceUsageTab(tabs.Tab):
 
         context = {}
         time = [
-            ('7 Days', '7d'),
-            ('14 Days', '14d'),
-            ('30 Days', '30d'),
-            ('90 Days', '90d'),
+            (_('7 Days'), '7d'),
+            (_('14 Days'), '14d'),
+            (_('30 Days'), '30d'),
+            (_('90 Days'), '90d'),
         ]
         queries = [
-            ('CPU Time (Seconds)', 'A sum of the number of seconds a CPU is active in a 5 minute period. A higher value denotes higher CPU usage.','instance_actual_cpu_time'),
-            ('Memory Usage','The total amount of memory consumed by the instance.', 'instance_actual_memory'),
-            ('Network (Bytes)','The total bandwidth used in bytes. This does not differentiate between external or internal traffic.', 'instance_actual_network_bytes'),
-            ('Disk Usage', 'Size of the root disk.','instance_actual_disk_usage'),
-            ('Disk IO', 'The number of input/output operations on a physical disk.','instance_actual_disk_io'),
+            (_('CPU Time (Seconds)'), _('A sum of the number of seconds a CPU is active in a 5 minute period. A higher value denotes higher CPU usage.'),'instance_actual_cpu_time'),
+            (_('Memory Usage'),_('The total amount of memory consumed by the instance.'), 'instance_actual_memory'),
+            (_('Network (Bytes)'),_('The total bandwidth used in bytes. This does not differentiate between external or internal traffic.'), 'instance_actual_network_bytes'),
+            (_('Disk Usage'),_('Size of the root disk.'),'instance_actual_disk_usage'),
+            (_('Disk IO'), _('The number of input/output operations on a physical disk.'),'instance_actual_disk_io'),
         ]
         context['time'] = time
         context['queries'] = queries
