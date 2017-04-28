@@ -26,6 +26,18 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #tm
+msgid "Qty"
+msgstr "Quantité"
+
+msgid "Quantity"
+msgstr "Quantite"
+
+msgid "Usage from "
+msgstr "Utilisation du "
+
+msgid " to "
+msgstr " au "
+
 msgid "Hours"
 msgstr "Heures"
 

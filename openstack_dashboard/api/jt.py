@@ -254,6 +254,28 @@ def get_dair_bandwidth_showback_usage(tenant, start, end):
         return "Information not available..."
     return usage
 
+def get_dair_object_store_showback_usage(tenant, start, end):
+    usage = {}
+    try:
+        graphite = getattr(settings, 'DAIR_GRAPHITE_SERVER')
+
+        query_container_count = "target=keepLastValue(projects.%s.*.swift.container_count)" % (tenant)
+        query_space_usage = "target=keepLastValue(projects.%s.*.swift.space_usage)" % (tenant)
+        query_object_count = "target=keepLastValue(projects.%s.*.swift.object_count)" % (tenant)
+
+        container_count = requests.get ('http://'+graphite+':8180/render?'+query_container_count+'&format=json')
+        space_usage = requests.get ('http://'+graphite+':8180/render?'+query_space_usage+'&format=json')
+        object_count = requests.get ('http://'+graphite+':8180/render?'+query_object_count+'&format=json')
+
+        usage[tenant] = {}
+        usage[tenant]['container_count'] = int(container_count.json()[0][u'datapoints'][-1][0])
+        usage[tenant]['object_count'] = int(object_count.json()[0][u'datapoints'][-1][0])
+        usage[tenant]['space_usage']= '%.2f' % round((space_usage.json()[0][u'datapoints'][-1][0] /1024 /1024),2)
+    except Exception as e:
+        print(str(e))
+        return "Information not available..."
+    return usage
+
 def get_dair_nova_showback_usage(tenant, start, end):
     usage = {}
     try:

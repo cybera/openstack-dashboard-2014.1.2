@@ -25,7 +25,7 @@
 </div>
 
 {% if usage %}
-  <h2>Usage from {{ start_date }} to {{ end_date }}</h2>
+<h2>{%trans "Usage from " %} {{ start_date }} {%trans " to " %} {{ end_date }}</h2>
     <div class="invoice-box">
       <h3>{%trans "Instances" %}</h3>
       <table cellpadding="0" cellspacing="0">
@@ -144,6 +144,25 @@
       </table> -->
 
      <a href="/project/dair_showback/csv_volumes?start={{ start_date }}&end={{ end_date }}">{%trans "Download CSV" %}</a>
+     <p></p>
+
+      <h3>{%trans "Object Storage" %}</h3>
+      <table cellpadding="0" cellspacing="0">
+      <tr class="heading">
+          <td width="40%">{%trans "Space usage (Mb)"%}</td>
+          <td width="30%">{%trans "Container count" %}</td>
+          <td>{%trans "Object count" %}</td>
+        </tr>
+        {% for k,v in usage.Swift.items %}
+          <tr class="item">
+            <td>{{ v.space_usage }}</td>
+            <td>{{ v.container_count }}</td>
+            <td>{{ v.object_count }}</td>
+        {% endfor %}
+      </table>
+
+      <a href="/project/dair_showback/csv_swift?start={{ start_date }}&end={{ end_date }}">{%trans "Download CSV" %}</a>
+      <p></p>
     </div>
 {% endif %}
 {% endblock %}

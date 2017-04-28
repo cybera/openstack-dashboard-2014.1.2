@@ -9,6 +9,7 @@ urlpatterns = patterns('openstack_dashboard.dashboards.project.dair_showback.vie
     url(r'^index$', views.DAIRShowbackView.as_view(), name='index'),
     url(r'^csv_instances$', views.DAIRShowbackCSV_instancesView.as_view(), name='csv'),
     url(r'^csv_bandwidth$', views.DAIRShowbackCSV_bandwidthView.as_view(), name='csv'),
+    url(r'^csv_swift$', views.DAIRShowbackCSV_swiftView.as_view(), name='csv'),
     url(r'^csv_volumes$', views.DAIRShowbackCSV_volumesView.as_view(), name='csv'),
     url(r'^csv_snapshots$', views.DAIRShowbackCSV_snapshotsView.as_view(), name='csv'),
     url(r'^warning$', views.WarningView.as_view(), name='warning'),

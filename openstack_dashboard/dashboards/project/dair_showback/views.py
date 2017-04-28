@@ -32,6 +32,7 @@ class DAIRShowbackView(TemplateView):
         if start_date and end_date:
             usage = {}
             usage['Bandwidth'] = api.jt.get_dair_bandwidth_showback_usage(project_id, start_date, end_date)
+            usage['Swift'] = api.jt.get_dair_object_store_showback_usage(project_id, start_date, end_date)
             usage['Instances'] = api.jt.get_dair_nova_showback_usage(project_id, start_date, end_date)
             usage['Snapshots'] = api.jt.get_dair_glance_showback_usage(project_id, start_date, end_date)
             usage['Volumes'] = api.jt.get_dair_cinder_showback_usage(project_id, start_date, end_date)
@@ -56,7 +57,7 @@ class DAIRShowbackCSV_instancesView(TemplateView):
             response = HttpResponse(content_type='text/csv')
             response['Content-Disposition'] = 'attachment; filename="instances.csv"'
             w = csv.writer(response)
-            w.writerow([_("Flavor"),_("Qty"),_("Hours")])
+            w.writerow([_("Flavor"),_("Quantity"),_("Hours")])
             for k, v in usage['Instances'].iteritems():
                # if k == 'total_cost':
                #     continue
@@ -84,6 +85,25 @@ class DAIRShowbackCSV_bandwidthView(TemplateView):
                #     continue
                #    w.writerow([k, v['hours'], v['count'], v['cost']])
                 w.writerow([ v['bytes_received'], v['bytes_transmitted']])
+
+            return response
+
+class DAIRShowbackCSV_swiftView(TemplateView):
+    def get(self, request, *args, **kwargs):
+        project_id = self.request.user.tenant_id
+        start_date = self.request.GET.get('start')
+        end_date = self.request.GET.get('end')
+
+        if start_date and end_date:
+            usage = {}
+            usage['Swift'] = api.jt.get_dair_object_store_showback_usage(project_id, start_date, end_date)
+
+            response = HttpResponse(content_type='text/csv')
+            response['Content-Disposition'] = 'attachment; filename="object_store.csv"'
+            w = csv.writer(response)
+            w.writerow([_("Space usage"),_("Container count"),_("Object count")])
+            for k, v in usage['Swift'].iteritems():
+                w.writerow([ v['space_usage'], v['container_count'], v['object_count']])
 
             return response
 
