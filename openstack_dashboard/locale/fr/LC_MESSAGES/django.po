@@ -62,6 +62,9 @@ msgstr "Graphiques"
 msgid "Showback"
 msgstr "Réaffichag"
 
+msgid "DAIR Showback"
+msgstr "Réaffichag de l'ATIR"
+
 msgid "Instance Usage"
 msgstr "Utilisation des instances"
 

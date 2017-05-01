@@ -259,9 +259,9 @@ def get_dair_object_store_showback_usage(tenant, start, end):
     try:
         graphite = getattr(settings, 'DAIR_GRAPHITE_SERVER')
 
-        query_container_count = "target=keepLastValue(projects.%s.*.swift.container_count)" % (tenant)
-        query_space_usage = "target=keepLastValue(projects.%s.*.swift.space_usage)" % (tenant)
-        query_object_count = "target=keepLastValue(projects.%s.*.swift.object_count)" % (tenant)
+        query_container_count = "target=sumSeries(keepLastValue(projects.%s.*.swift.container_count,100))" % (tenant)
+        query_space_usage = "target=sumSeries(keepLastValue(projects.%s.*.swift.space_usage,100))" % (tenant)
+        query_object_count = "target=sumSeries(keepLastValue(projects.%s.*.swift.object_count,100))" % (tenant)
 
         container_count = requests.get ('http://'+graphite+':8180/render?'+query_container_count+'&format=json')
         space_usage = requests.get ('http://'+graphite+':8180/render?'+query_space_usage+'&format=json')
