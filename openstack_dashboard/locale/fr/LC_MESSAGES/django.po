@@ -26,6 +26,18 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #tm
+msgid "Space usage (Mb)"
+msgstr "Espace utilisé (Mo)"
+
+msgid "Space usage"
+msgstr "Espace utilise"
+
+msgid "Container count"
+msgstr "Nombre de contenants"
+
+msgid "Object count"
+msgstr "Nombre d'objets"
+
 msgid "Qty"
 msgstr "Quantité"
 
