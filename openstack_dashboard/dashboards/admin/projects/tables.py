@@ -74,7 +74,6 @@ class GraphLink(tables.LinkAction):
      #return "".join(["http://graphite.dair-atir.canarie.ca/grafana/#/dashboard/script/dair-project.js?project=", project.id])
       return "".join(["http://grafana.dair-atir.canarie.ca:3000/dashboard/db/real-usage-project-total?var-project=", project.id])
 
-
 class CreateProject(tables.LinkAction):
     name = "create"
     verbose_name = _("Create Project")

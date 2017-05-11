@@ -34,7 +34,7 @@ class GraphLink(tables.LinkAction):
 
     def get_link_url(self, instance):
       print instance.tenant_id
-       #tm
+      #tm
       #return "http://graphite.dair-atir.canarie.ca/grafana/#/dashboard/script/dair-instance.js?project=%s&instance=%s" % (instance.tenant_id, instance.id)
       return "http://grafana.dair-atir.canarie.ca/dashboard/db/real-usage-per-instance?var-project=%s&var-instance=%s" % (instance.tenant_id, instance.id)
 
