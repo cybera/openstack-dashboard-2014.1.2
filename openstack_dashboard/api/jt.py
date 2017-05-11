@@ -16,12 +16,6 @@ def _dbconnect(db=None):
         db = 'dair_information'
     return MySQLdb.connect(host=host,user=username,passwd=password,db=db)
 
-def _dbconnect():
-    username = getattr(settings, 'DAIR_MYSQL_USERNAME')
-    password = getattr(settings, 'DAIR_MYSQL_PASSWORD')
-    host = getattr(settings, 'DAIR_MYSQL_HOST')
-    return MySQLdb.connect(host=host,user=username,passwd=password,db='dair_information')
-
 def get_image_quota(project_id):
     import subprocess
     cmd = 'sudo /root/novac/bin/novac quota-image-get %s' % project_id
