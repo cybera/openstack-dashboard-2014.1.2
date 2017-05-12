@@ -113,7 +113,7 @@ def get_dair_notice(project_id):
         notice = c.fetchone()
         if notice is not None:
             return notice[0]
-        return ""
+        return None
     except MySQLdb.Error, e:
         print(str(e))
         return "Information not available..."

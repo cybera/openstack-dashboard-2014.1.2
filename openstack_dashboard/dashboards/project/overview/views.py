@@ -72,9 +72,10 @@ class ProjectOverview(usage.UsageView):
 
         # dair notice
         dair_notice = api.jt.get_dair_notice(project_id)
-        dair_notice = dair_notice.strip()
-        if dair_notice != "":
-            self.usage.limits['dair_notice'] = dair_notice
+        if dair_notice is not None:
+            dair_notice = dair_notice.strip()
+            if dair_notice != "":
+                self.usage.limits['dair_notice'] = dair_notice
 
         # object storage
         object_mb_usage = api.jt.get_object_mb_usage(project_id)
