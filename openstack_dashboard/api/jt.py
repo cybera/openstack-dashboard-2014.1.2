@@ -334,6 +334,7 @@ def get_dair_glance_showback_usage(tenant, start, end):
         c.execute(query, data)
         rows = c.fetchall()
         for row in rows:
+            print row
             start_date = row[0]
             name = row[2]
             if row[1]:
@@ -341,7 +342,10 @@ def get_dair_glance_showback_usage(tenant, start, end):
             hours = int((end_date - start_date).total_seconds() / 60 / 60)
             usage[name] = {}
             usage[name]['hours'] = hours
-            usage[name]['size'] = row[3] / 1024 / 1024 / 1024.0
+            if row[3] is not None:
+                usage[name]['size'] = row[3] / 1024 / 1024 / 1024.0
+            else:
+                usage[name]['size'] = 0
         #    usage[name]['cost'] = float("%.2f" % (usage[name]['size'] * hours * prices['glance']))
         #    total_cost += usage[name]['cost']
         #usage['total_cost'] = total_cost
