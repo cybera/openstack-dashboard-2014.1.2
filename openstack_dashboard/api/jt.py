@@ -293,11 +293,17 @@ def get_dair_nova_showback_usage(tenant, start, end):
         c.execute(query, data)
         rows = c.fetchall()
         for row in rows:
-            start_date = row[0]
+            instance_start_date = 0
+            if ((start_date - row[0]).total_seconds() > 0):
+                # Showback window is newer than instance creation
+                instance_start_date = start_date
+            else:
+                instance_start_date = row[0]
             flavor_name = row[2]
+            # If instance was deleted
             if row[1]:
                 end_date = row[1]
-            hours = abs(int((end_date - start_date).total_seconds() / 60 / 60))
+            hours = abs(int((end_date - instance_start_date).total_seconds() / 60 / 60))
         #tm
         #    if flavor_name in prices['nova']:
         #        flavor_cost = prices['nova'][flavor_name]
