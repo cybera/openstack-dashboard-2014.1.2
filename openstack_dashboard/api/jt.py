@@ -340,11 +340,16 @@ def get_dair_glance_showback_usage(tenant, start, end):
         c.execute(query, data)
         rows = c.fetchall()
         for row in rows:
-            start_date = row[0]
+            image_start_date = 0
+            if ((start_date - row[0]).total_seconds() > 0):
+                # Showback window is newer than instance creation
+                image_start_date = start_date
+            else:
+                image_start_date = row[0]
             name = row[2]
             if row[1]:
                 end_date = row[1]
-            hours = int((end_date - start_date).total_seconds() / 60 / 60)
+            hours = int((end_date - image_start_date).total_seconds() / 60 / 60)
             usage[name] = {}
             usage[name]['hours'] = hours
             if row[3] is not None:
@@ -373,11 +378,16 @@ def get_dair_cinder_showback_usage(tenant, start, end):
         c.execute(query, data)
         rows = c.fetchall()
         for row in rows:
-            start_date = row[0]
+            volume_start_date = 0
+            if ((start_date - row[0]).total_seconds() > 0):
+                # Showback window is newer than instance creation
+                volume_start_date = start_date
+            else:
+                volume_start_date = row[0]
             name = row[2]
             if row[1]:
                 end_date = row[1]
-            hours = int((end_date - start_date).total_seconds() / 60 / 60)
+            hours = int((end_date - volume_start_date).total_seconds() / 60 / 60)
             usage[name] = {}
             usage[name]['hours'] = hours
             usage[name]['size'] = row[3]
