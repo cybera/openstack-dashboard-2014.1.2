@@ -334,7 +334,6 @@ def get_dair_glance_showback_usage(tenant, start, end):
         c.execute(query, data)
         rows = c.fetchall()
         for row in rows:
-            print row
             start_date = row[0]
             name = row[2]
             if row[1]:
