@@ -55,9 +55,9 @@ class DAIRShowbackCSV_instancesView(TemplateView):
             usage['Instances'] = api.jt.get_dair_nova_showback_usage(project_id, start_date, end_date)
 
             response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="instances.csv"'
+            response['Content-Disposition'] = 'attachment; filename="instances-from-{0}-to-{1}.csv"'.format(start_date,end_date)
             w = csv.writer(response)
-            w.writerow([_("Flavor"),_("Quantity"),_("Hours")])
+            w.writerow([_("Flavor"),_("Hours"),_("Quantity")])
             for k, v in usage['Instances'].iteritems():
                # if k == 'total_cost':
                #     continue
@@ -77,7 +77,7 @@ class DAIRShowbackCSV_bandwidthView(TemplateView):
             usage['Bandwidth'] = api.jt.get_dair_bandwidth_showback_usage(project_id, start_date, end_date)
 
             response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="bandwidth.csv"'
+            response['Content-Disposition'] = 'attachment; filename="bandwidth-from-{0}-to-{1}.csv"'.format(start_date,end_date)
             w = csv.writer(response)
             w.writerow([_("In (Mb)"),_("Out (Mb)")])
             for k, v in usage['Bandwidth'].iteritems():
@@ -99,7 +99,7 @@ class DAIRShowbackCSV_swiftView(TemplateView):
             usage['Swift'] = api.jt.get_dair_object_store_showback_usage(project_id, start_date, end_date)
 
             response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="object_store.csv"'
+            response['Content-Disposition'] = 'attachment; filename="object_store-from-{0}-to-{1}.csv"'.format(start_date,end_date)
             w = csv.writer(response)
             w.writerow([_("Space usage"),_("Container count"),_("Object count")])
             for k, v in usage['Swift'].iteritems():
@@ -118,7 +118,7 @@ class DAIRShowbackCSV_snapshotsView(TemplateView):
             usage['Snapshots'] = api.jt.get_dair_glance_showback_usage(project_id, start_date, end_date)
 
             response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="snapshots.csv"'
+            response['Content-Disposition'] = 'attachment; filename="snapshots-from-{0}-to-{1}.csv"'.format(start_date,end_date)
             w = csv.writer(response)
             w.writerow([_("Name"),_("Hours"),_("Size (GB)")])
             for k, v in usage['Snapshots'].iteritems():
@@ -140,7 +140,7 @@ class DAIRShowbackCSV_volumesView(TemplateView):
             usage['Volumes'] = api.jt.get_dair_cinder_showback_usage(project_id, start_date, end_date)
 
             response = HttpResponse(content_type='text/csv')
-            response['Content-Disposition'] = 'attachment; filename="volumes.csv"'
+            response['Content-Disposition'] = 'attachment; filename="volumes-from-{0}-to-{1}.csv"'.format(start_date,end_date)
             w = csv.writer(response)
             w.writerow([_("Name"),_("Hours"),_("Size (GB)")])
             for k, v in usage['Volumes'].iteritems():

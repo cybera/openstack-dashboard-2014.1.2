@@ -34,8 +34,8 @@
 <br>
 <br>
 (<a href="instance_data?query={{ query }}&instance={{ request.GET.instance }}&from={{ request.GET.from }}&format=json">JSON</a>)
-(<a href="instance_data?query={{ query }}&instance={{ request.GET.instance }}&from={{ request.GET.from }}&format=csv">CSV</a>)
 <br>
 <hr>
 {% endfor %}
+<a href="instance_dataCSVSummary?instance={{ request.GET.instance }}&from={{ request.GET.from   }}&format=csv">{%trans "Download Summary_CSV" %}</a>
 {% endif %}

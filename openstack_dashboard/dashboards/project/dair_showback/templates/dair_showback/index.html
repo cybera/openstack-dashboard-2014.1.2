@@ -32,16 +32,16 @@
         <tr class="heading">
           <!-- <td width="60%">Flavor</td> -->
           <td width="70%">{%trans "Flavor" %}</td>
-          <td width="15%">{%trans "Qty" %}</td>
           <td>{%trans "Hours" %}</td>
+          <td width="15%">{%trans "Qty" %}</td>
           <!--  <td>Price</td> -->
         </tr>
         {% for k,v in usage.Instances.items %}
         <!-- {% if k != "total_cost" %} -->
         <tr class="item">
           <td>{{ k }}</td>
-          <td>{{ v.count }}</td>
           <td>{{ v.hours }}</td>
+          <td>{{ v.count }}</td>
           <!-- <td>${{ v.cost|floatformat:2 }}</td > -->
         </tr>
         <!-- {% endif %} -->
