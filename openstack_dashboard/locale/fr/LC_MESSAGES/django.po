@@ -56,8 +56,14 @@ msgstr "nombre d'UC virtuelles en"
 msgid "memory usage in"
 msgstr "mémoire utilisée en"
 
+msgid "memory usage in "
+msgstr "memoire utilisee en"
+
 msgid "disk usage in"
 msgstr "espace disque utilisé en"
+
+msgid "disk usage in "
+msgstr "espace disque utilise en"
 
 msgid "Download Summary CSV"
 msgstr "Télécharger le sommaire CSV"
@@ -77,20 +83,35 @@ msgstr "utilisation de l'UC"
 msgid "memory available"
 msgstr "mémoire disponible"
 
+msgid "memory available "
+msgstr "memoire disponible"
+
 msgid "memory used"
 msgstr "mémoire utilisée"
+
+msgid "memory used "
+msgstr "memoire utilisee"
 
 msgid "bytes_used"
 msgstr "nombre d'octets utilisé"
 
+msgid "bytes_used "
+msgstr "nombre d'octets utilise"
+
 msgid "wr_req (writes)"
 msgstr "wr_req (écritures)"
+
+msgid "wr_req (writes) "
+msgstr "wr_req (ecritures)"
 
 msgid "rd_req (reads)"
 msgstr "rd_req (lectures)"
 
 msgid "rx_bytes (received)"
 msgstr "rx_bytes (reçus)"
+
+msgid "rx_bytes (received) "
+msgstr "rx_bytes (recus)"
 
 msgid "tx_bytes (transmitted)"
 msgstr "tx_bytes (transmis)"

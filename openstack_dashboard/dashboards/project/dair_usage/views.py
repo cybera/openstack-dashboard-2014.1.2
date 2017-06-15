@@ -31,10 +31,10 @@ class DAIRProjectData(TemplateView):
         base_url = 'http://%s:8180/render?from=-%s&width=800&format=%s&target=' % (graphite_server, from_date, data_format)
         query_results = {}
         queries = {
-            'project_allocated_instances': "aliasSub(aliasByNode(cactiStyle(summarize(keepLastValue(projects.%s.cloud_usage-*.instances),'5min','avg')), 2), 'cloud_usage-([^\\n\\r]*)', 'number of instances in \\1')" % project_id,
-            'project_allocated_cpu': "aliasSub(aliasByNode(summarize(keepLastValue(projects.%s.cloud_usage*.cpu),'5min','avg'), 2),'cloud_usage-([^\\n\\r]*)', 'number of virtual cpus in \\1')" % project_id,
-            'project_allocated_memory': "aliasSub(aliasByNode(summarize(keepLastValue(projects.%s.cloud_usage*.memory),'5min','avg'), 2),'cloud_usage-([^\\n\\r]*)', 'memory usage in \\1')" % project_id,
-            'project_allocated_ephemeral_disk': "aliasSub(aliasByNode(summarize(keepLastValue(projects.%s.cloud_usage*.disk),'5min','avg'), 2),'cloud_usage-([^\\n\\r]*)', 'disk usage in \\1')" % project_id,
+            'project_allocated_instances': "aliasSub(aliasByNode(cactiStyle(summarize(keepLastValue(projects.%s.cloud_usage-*.instances),'5min','avg')), 2), 'cloud_usage-([^\\n\\r]*)', %s )" % (project_id,'"'+_('number of instances in')+' \\1"'),
+            'project_allocated_cpu': "aliasSub(aliasByNode(summarize(keepLastValue(projects.%s.cloud_usage*.cpu),'5min','avg'), 2),'cloud_usage-([^\\n\\r]*)', %s )" % (project_id, '"'+_('number of virtual cpus in')+' \\1"'),
+            'project_allocated_memory': "aliasSub(aliasByNode(summarize(keepLastValue(projects.%s.cloud_usage*.memory),'5min','avg'), 2),'cloud_usage-([^\\n\\r]*)', %s)" % (project_id, '"'+_('memory usage in ')+' \\1"'),
+            'project_allocated_ephemeral_disk': "aliasSub(aliasByNode(summarize(keepLastValue(projects.%s.cloud_usage*.disk),'5min','avg'), 2),'cloud_usage-([^\\n\\r]*)', %s)" % (project_id, '"'+_('disk usage in ')+' \\1"'),
         }
         query = self.request.GET.get('query', False)
         if query:
@@ -86,24 +86,26 @@ class DAIRInstanceData(TemplateView):
         data_format = self.request.GET.get('format', False)
         if data_format not in ['csv', 'json', False]:
             return None
-
         project_id = self.request.user.tenant_id
         graphite_server = getattr(settings, 'DAIR_GRAPHITE_SERVER')
         base_url = 'http://%s:8180/render?from=-%s&width=800&format=%s&target=' % (graphite_server, from_date, data_format)
         query_results = {}
         queries = {
-            'instance_actual_cpu_time': "aliasByNode(derivative(summarize(projects.%s.instances.%s.cpu.cpu_time, '5min', 'avg')), 5)" % (project_id, instance_id),
-            'instance_actual_memory': "alias(scale(summarize(projects.%s.instances.%s.memory.available,'5min','avg'), 1024),'memory available')&target=alias(scale(summarize(projects.%s.instances.%s.memory.used,'5min','avg'),1024),'memory used')&yMin=0" % (project_id, instance_id, project_id, instance_id),
-            'instance_actual_network_bytes': "alias(derivative(summarize(projects.%s.instances.%s.interface.eth0.rx_bytes, '5min', 'max')), 'rx_bytes (received)')&target=alias(derivative(summarize(projects.%s.instances.%s.interface.eth0.tx_bytes,'5min','max')),'tx_byes (transmitted)')&yMin=0" % (project_id, instance_id, project_id, instance_id),
-            'instance_actual_disk_usage': "aliasByNode(summarize(projects.%s.instances.%s.disk.vda.bytes_used,'5min','avg'),6)&yMin=0" % (project_id, instance_id),
-            'instance_actual_disk_io': "alias(derivative(summarize(projects.%s.instances.%s.disk.vda.wr_req,'5min','avg')),'wr_req (writes)')&target=alias(derivative(summarize(projects.%s.instances.%s.disk.vda.rd_req,'5min','avg')), 'rd_req (reads)')&yMin=0" % (project_id, instance_id, project_id, instance_id),
+            'instance_actual_cpu_time': "alias(derivative(summarize(projects.%s.instances.%s.cpu.cpu_time, '5min', 'avg')), %s)" % (project_id, instance_id,'"'+_('cpu_time')+'"'),
+            'instance_actual_memory': "alias(scale(summarize(projects.%s.instances.%s.memory.available,'5min','avg'), 1024), %s )&target=alias(scale(summarize(projects.%s.instances.%s.memory.used,'5min','avg'),1024), %s)&yMin=0" % (project_id, instance_id, '"'+_('memory available ')+'"', project_id, instance_id,'"'+_('memory used ')+'"'),
+            'instance_actual_network_bytes': "alias(derivative(summarize(projects.%s.instances.%s.interface.eth0.rx_bytes, '5min', 'max')), %s)&target=alias(derivative(summarize(projects.%s.instances.%s.interface.eth0.tx_bytes,'5min','max')), %s)&yMin=0" % (project_id, instance_id, '"'+_('rx_bytes (received) ')+'"', project_id, instance_id, '"'+_('tx_bytes (transmitted)')+'"'),
+            'instance_actual_disk_usage': "alias(summarize(projects.%s.instances.%s.disk.vda.bytes_used,'5min','avg'), %s)&yMin=0" % (project_id, instance_id,'"'+_('bytes_used ')+'"'),
+            'instance_actual_disk_io': "alias(derivative(summarize(projects.%s.instances.%s.disk.vda.wr_req,'5min','avg')), %s)&target=alias(derivative(summarize(projects.%s.instances.%s.disk.vda.rd_req,'5min','avg')), %s)&yMin=0" % (project_id, instance_id, '"'+_('wr_req (writes) ')+'"',project_id, instance_id, '"'+_('rd_req (reads)')+'"'),
         }
 
         query = self.request.GET.get('query', False)
 
         if query:
             try:
-                r = requests.get("%s%s" % (base_url, queries[query]))
+                print('!!!!!')
+                print(queries[query])
+                print('@@@@@@')
+                r = requests.get("%s%s" % (base_url,queries[query]))
                 r_content=r.content
             except requests.ConnectionError:
                 r_content="Information not available..."
