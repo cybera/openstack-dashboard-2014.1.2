@@ -59,3 +59,7 @@
     border-top:2px solid #eee;
     font-weight:bold;
 }
+
+.invoice-box hr.style1 {
+    border-top: 3px double #8c8b8b;
+}

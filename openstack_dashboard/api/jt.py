@@ -118,6 +118,21 @@ def get_dair_notice(project_id):
         print(str(e))
         return "Information not available..."
 
+def get_research_participant(project_id):
+    try:
+        db = _dbconnect()
+        c = db.cursor()
+        query = "SELECT research_participant from project_information where project_id = %s"
+        data = (project_id)
+        c.execute(query, data)
+        research_participant = c.fetchone()
+        if research_participant is not None:
+            return research_participant[0]
+        return None
+    except MySQLdb.Error, e:
+        print(str(e))
+        return "Information not available..."
+
 def set_dair_notice(project_id, notice, is_admin_notice):
     try:
         if is_admin_notice:
@@ -126,6 +141,17 @@ def set_dair_notice(project_id, notice, is_admin_notice):
         c = db.cursor()
         query = "INSERT INTO project_information (project_id, notice) VALUES (%s, %s) ON DUPLICATE KEY UPDATE notice = %s"
         data = (project_id, notice, notice)
+        c.execute(query, data)
+        db.commit()
+    except Exception as e:
+        print(str(e))
+
+def set_research_participant(project_id, research_participant):
+    try:
+        db = _dbconnect()
+        c = db.cursor()
+        query = "INSERT INTO project_information (project_id, research_participant) VALUES (%s, %s) ON DUPLICATE KEY UPDATE research_participant = %s"
+        data = (project_id, research_participant, research_participant)
         c.execute(query, data)
         db.commit()
     except Exception as e:

@@ -57,6 +57,8 @@ class UpdateDAIRAction(workflows.Action):
     dair_notice = forms.CharField(max_length=750, label=_("Notice from DAIR"), required=False)
     dair_notice_link = forms.CharField(max_length=750, label=_("Optional URL"), required=False)
     reseller_logo = forms.CharField(max_length=100, label=_("Reseller Logo"), required=False)
+    #tm
+    research_participant = forms.CharField(max_length=100, label=_("Research software Participant"), required=False)
 
     def __init__(self, request, *args, **kwargs):
         super(UpdateDAIRAction, self).__init__(request,
@@ -69,6 +71,7 @@ class UpdateDAIRAction(workflows.Action):
             self.fields['dair_notice'].initial = api.jt.get_dair_notice(project_id)
             self.fields['dair_notice_link'].initial = api.jt.get_dair_notice_link(project_id)
             self.fields['reseller_logo'].initial = api.jt.get_reseller_logo(project_id)
+            self.fields['research_participant'].initial = api.jt.get_research_participant(project_id)
         else:
             start_date = datetime.date.today()
             future_expire_date = start_date.replace(year=start_date.year+1).strftime('%B %d, %Y')
@@ -77,6 +80,8 @@ class UpdateDAIRAction(workflows.Action):
             self.fields['dair_notice'].initial = ''
             self.fields['dair_notice_link'].initial = ''
             self.fields['reseller_logo'].initial = ''
+            #tm
+            self.fields['research_participant'].initial = ''
 
     class Meta:
         name = _("DAIR")
@@ -86,7 +91,7 @@ class UpdateDAIRAction(workflows.Action):
 class UpdateDAIR(workflows.Step):
     action_class = UpdateDAIRAction
     depends_on = ("project_id",)
-    contributes = ('expiration', 'start_date', 'dair_notice', 'dair_notice_link', 'reseller_logo',)
+    contributes = ('expiration', 'start_date', 'dair_notice', 'dair_notice_link', 'reseller_logo','research_participant',)
 
 class UpdateProjectQuotaAction(workflows.Action):
     ifcb_label = _("Injected File Content Bytes")
@@ -560,6 +565,9 @@ class CreateProject(workflows.Workflow):
                 api.jt.set_object_mb_quota(project_id, data['object_mb'])
             if data['reseller_logo'] != 'Information not available.':
                 api.jt.set_reseller_logo(project_id, data['reseller_logo'])
+            #tm
+            if data['research_participant'] != '':
+                api.jt.set_research_participant(project_id, data['research_participant'])
         except Exception:
             exceptions.handle(request, _('Unable to set project quotas.'))
         return True
@@ -837,6 +845,8 @@ class UpdateProject(workflows.Workflow):
             api.jt.set_start_date(project_id, data['start_date'])
             api.jt.set_object_mb_quota(project_id, data['object_mb'])
             api.jt.set_reseller_logo(project_id, data['reseller_logo'])
+            #tm
+            api.jt.set_research_participant(project_id, data['research_participant'])
 
             is_admin_notice = False
             admin_tenant_id = get_admin_tenant_id(request)

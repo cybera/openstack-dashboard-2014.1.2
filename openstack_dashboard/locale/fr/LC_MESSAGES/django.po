@@ -26,6 +26,78 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
 #tm
+msgid "instances-from"
+msgstr "instances-du"
+
+msgid "snapshots-from"
+msgstr "snapshots-du"
+
+msgid "volumes-from"
+msgstr "volumes-du"
+
+msgid "bandwidth-from"
+msgstr "débit_extere-du"
+
+msgid "object_storage-from"
+msgstr "stockage_d'objets-du"
+
+msgid "summary-from"
+msgstr "sommaire-du"
+
+msgid "to"
+msgstr "au"
+
+msgid "number of instances in"
+msgstr "nombre d'instances en"
+
+msgid "number of virtual cpus in"
+msgstr "nombre d'UC virtuelles en"
+
+msgid "memory usage in"
+msgstr "mémoire utilisée en"
+
+msgid "disk usage in"
+msgstr "espace disque utilisé en"
+
+msgid "Download Summary CSV"
+msgstr "Télécharger le sommaire CSV"
+
+msgid "Project_Usage_Summary"
+msgstr "Sommaire_de_l'utilisation_par_les_projets"
+
+msgid "timestamp"
+msgstr "horodatage"
+
+msgid "Instance_Usage_Summary"
+msgstr "Sommaire_de_l'utilisation_des_instances"
+
+msgid "cpu_time"
+msgstr "utilisation de l'UC"
+
+msgid "memory available"
+msgstr "mémoire disponible"
+
+msgid "memory used"
+msgstr "mémoire utilisée"
+
+msgid "bytes_used"
+msgstr "nombre d'octets utilisé"
+
+msgid "wr_req (writes)"
+msgstr "wr_req (écritures)"
+
+msgid "rd_req (reads)"
+msgstr "rd_req (lectures)"
+
+msgid "rx_bytes (received)"
+msgstr "rx_bytes (reçus)"
+
+msgid "tx_bytes (transmitted)"
+msgstr "tx_bytes (transmis)"
+
+msgid "Download XLS Summary"
+msgstr "Télécharger le sommaire XLS"
+
 msgid "Space usage (Mb)"
 msgstr "Espace utilisé (Mo)"
 
@@ -124,6 +196,9 @@ msgstr "Formater la date AAAA-mm-jj"
 
 msgid "External Bandwidth"
 msgstr "Débit extere"
+
+msgid "External Bandwidth "
+msgstr "Debit extere"
 
 msgid "In (MB)"
 msgstr "Entrées (Mo)"
