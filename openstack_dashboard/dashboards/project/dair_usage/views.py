@@ -102,9 +102,7 @@ class DAIRInstanceData(TemplateView):
 
         if query:
             try:
-                print('!!!!!')
                 print(queries[query])
-                print('@@@@@@')
                 r = requests.get("%s%s" % (base_url,queries[query]))
                 r_content=r.content
             except requests.ConnectionError:

@@ -17,11 +17,15 @@
 
 {% for query_title, query in queries %}
 <h3>{{ query_title }}</h3>
-<img src="project_data?query={{ query }}&from={{ request.GET.from }}">
+{% if request.GET.from %}
+  <img src="project_data?query={{ query }}&from={{ request.GET.from }}">
+{% else %}
+  <img src="project_data?query={{ query }}&from=7d">
+{% endif %}
 <br>
 <br>
 (<a href="project_data?query={{ query }}&from={{ request.GET.from }}&format=json">JSON</a>)
 <br>
 <hr>
 {% endfor %}
-<a href="project_dataCSVSummary?instance={{ request.GET.instance }}&from={{ request.GET.from   }}&format=csv">{%trans "Download Summary CSV" %}</a>
+<a href="project_dataCSVSummary?from={{ request.GET.from   }}&format=csv">{%trans "Download Summary CSV" %}</a>
