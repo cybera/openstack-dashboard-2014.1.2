@@ -24,8 +24,16 @@
 {% endif %}
 <br>
 <br>
-(<a href="project_data?query={{ query }}&from={{ request.GET.from }}&format=json">JSON</a>)
+{% if request.GET.from %}
+  (<a href="project_data?query={{ query }}&from={{ request.GET.from }}&format=json">JSON</a>)
+{% else %}
+  (<a href="project_data?query={{ query }}&from=7d&format=json">JSON</a>)
+{% endif %}
 <br>
 <hr>
 {% endfor %}
-<a href="project_dataCSVSummary?from={{ request.GET.from   }}&format=csv">{%trans "Download Summary CSV" %}</a>
+{% if request.GET.from %}
+  <a href="project_dataCSVSummary?from={{ request.GET.from   }}&format=csv">{%trans "Download Summary CSV" %}</a>
+{% else %}
+  <a href="project_dataCSVSummary?from=7d&format=csv">{%trans "Download Summary CSV" %}</a>
+{% endif %}
