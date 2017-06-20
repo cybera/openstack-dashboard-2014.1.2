@@ -58,7 +58,7 @@ class UpdateDAIRAction(workflows.Action):
     dair_notice_link = forms.CharField(max_length=750, label=_("Optional URL"), required=False)
     reseller_logo = forms.CharField(max_length=100, label=_("Reseller Logo"), required=False)
     #tm
-    research_participant = forms.CharField(max_length=100, label=_("Research software Participant"), required=False)
+    research_participant = forms.CharField(max_length=100, label=_("Research Software Participant"), required=False)
 
     def __init__(self, request, *args, **kwargs):
         super(UpdateDAIRAction, self).__init__(request,
