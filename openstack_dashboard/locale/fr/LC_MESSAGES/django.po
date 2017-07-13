@@ -4161,11 +4161,6 @@ msgstr "Impossible de récupérer le groupe de sécurité."
 msgid "%s (current)"
 msgstr "%s (courant)"
 
-#: dashboards/project/access_and_security/templates/access_and_security/index.html:3
-#: dashboards/project/access_and_security/templates/access_and_security/index.html:6
-msgid "Access &amp; Security"
-msgstr "Accès et sécurité"
-
 #: dashboards/project/access_and_security/templates/access_and_security/floating_ips/_allocate.html:9
 #: dashboards/project/access_and_security/templates/access_and_security/floating_ips/allocate.html:3
 msgid "Allocate Floating IP"
@@ -8642,8 +8637,8 @@ msgstr "Nom du Volume"
 
 #: dashboards/project/volumes/templates/volumes/index.html:3
 #: dashboards/project/volumes/templates/volumes/index.html:6
-msgid "Volumes &amp; Snapshots"
-msgstr "Volumes &amp; instantanés"
+msgid "Volumes & Snapshots"
+msgstr "Volumes & instantanés"
 
 #: dashboards/project/volumes/templates/volumes/snapshots/_detail_overview.html:4
 msgid "Volume Snapshot Overview"
