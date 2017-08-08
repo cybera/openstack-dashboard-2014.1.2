@@ -29,8 +29,8 @@ class BasePanels(horizon.PanelGroup):
               'access_and_security',)
 
 class DAIRUsagePanels(horizon.PanelGroup):
-    slug = "dair_usage"
-    name = _("DAIR Usage")
+    slug = "cloudtracker"
+    name = _("CloudTracker")
     panels = ('dair_usage',
               'dair_showback',)
 

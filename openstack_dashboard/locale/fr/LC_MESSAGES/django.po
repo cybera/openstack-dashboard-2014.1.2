@@ -161,6 +161,9 @@ msgstr "90 jours"
 msgid "DAIR Usage"
 msgstr "Utilisation de l'ATIR"
 
+msgid "CloudTracker"
+msgstr "CloudTracker"
+
 msgid "Usage Graphs"
 msgstr "Graphiques"
 
@@ -169,6 +172,9 @@ msgstr "Réaffichag"
 
 msgid "DAIR Showback"
 msgstr "Réaffichag de l'ATIR"
+
+msgid "CloudTracker Showback"
+msgstr "Réaffichag de le CloudTracker"
 
 msgid "Instance Usage"
 msgstr "Utilisation des instances"
