@@ -5,6 +5,6 @@ from openstack_dashboard.dashboards.project import dashboard
 
 class DAIRShowback(horizon.Panel):
     name = _("Showback")
-    slug = 'dair_showback'
+    slug = 'cloudtracker_showback'
 
 dashboard.Project.register(DAIRShowback)

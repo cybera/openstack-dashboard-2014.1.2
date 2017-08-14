@@ -5,6 +5,6 @@ from openstack_dashboard.dashboards.project import dashboard
 
 class DAIRUsage(horizon.Panel):
     name = _("Usage Graphs")
-    slug = 'dair_usage'
+    slug = 'cloudtracker_usage'
 
 dashboard.Project.register(DAIRUsage)

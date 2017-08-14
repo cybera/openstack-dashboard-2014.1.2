@@ -31,8 +31,8 @@ class BasePanels(horizon.PanelGroup):
 class DAIRUsagePanels(horizon.PanelGroup):
     slug = "cloudtracker"
     name = _("CloudTracker")
-    panels = ('dair_usage',
-              'dair_showback',)
+    panels = ('cloudtracker_usage',
+              'cloudtracker_showback',)
 
 
 

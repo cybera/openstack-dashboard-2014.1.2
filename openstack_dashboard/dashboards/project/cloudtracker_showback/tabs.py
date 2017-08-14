@@ -9,7 +9,7 @@ import requests
 class DAIRProjectUsageTab(tabs.Tab):
     name = "Project Usage"
     slug = "project"
-    template_name = "project/dair_usage/project_usage.html"
+    template_name = "project/cloudtracker_usage/project_usage.html"
     preload = False
 
     def get_context_data(self, request):
@@ -35,7 +35,7 @@ class DAIRProjectUsageTab(tabs.Tab):
 class DAIRInstanceUsageTab(tabs.Tab):
     name = "Instance Usage"
     slug = "instances"
-    template_name = "project/dair_usage/instance_usage.html"
+    template_name = "project/cloudtracker_usage/instance_usage.html"
     preload = False
 
     def get_context_data(self, request):
@@ -62,5 +62,5 @@ class DAIRInstanceUsageTab(tabs.Tab):
         return context
 
 class DAIRUsageTabs(tabs.TabGroup):
-    slug = "dair_usage"
+    slug = "cloudtracker_usage"
     tabs = (DAIRProjectUsageTab,DAIRInstanceUsageTab)

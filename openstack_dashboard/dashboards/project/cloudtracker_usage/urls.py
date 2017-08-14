@@ -1,10 +1,10 @@
 from django.conf.urls import patterns  # noqa
 from django.conf.urls import url  # noqa
 
-from openstack_dashboard.dashboards.project.dair_usage import views
+from openstack_dashboard.dashboards.project.cloudtracker_usage import views
 
 
-urlpatterns = patterns('openstack_dashboard.dashboards.project.dair_usage.views',
+urlpatterns = patterns('openstack_dashboard.dashboards.project.cloudtracker_usage.views',
     url(r'^$', views.DAIRUsageView.as_view(), name='index'),
     url(r'^index$', views.DAIRUsageView.as_view(), name='index'),
     url(r'^project_data$', views.DAIRProjectData.as_view(), name='project_data'),

@@ -17,7 +17,7 @@ import csv
 
 class DAIRUsageView(tabs.TabView):
     tab_group_class = DAIRUsageTabs
-    template_name = 'project/dair_usage/index.html'
+    template_name = 'project/cloudtracker_usage/index.html'
 
     def get(self, request, *args, **kwargs):
         return super(DAIRUsageView, self).get(request, *args, **kwargs)

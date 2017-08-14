@@ -18,7 +18,7 @@ import requests
 import sys
 
 class DAIRShowbackView(TemplateView):
-    template_name = 'project/dair_showback/index.html'
+    template_name = 'project/cloudtracker_showback/index.html'
 
     def get_context_data(self, **kwargs):
         context = super(DAIRShowbackView, self).get_context_data(**kwargs)
