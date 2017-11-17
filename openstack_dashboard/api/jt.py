@@ -1,7 +1,7 @@
 from dateutil import parser
 from django.conf import settings
 from horizon import conf
-import MySQLdb
+import mysql.connector
 from django import http
 
 import glance
@@ -14,7 +14,17 @@ def _dbconnect(db=None):
     host = getattr(settings, 'DAIR_MYSQL_HOST')
     if db == None:
         db = 'dair_information'
-    return MySQLdb.connect(host=host,user=username,passwd=password,db=db)
+
+    dbconfig = {
+        "host": host,
+        "user": username,
+        "passwd": password,
+        "db": db,
+    }
+    print("Connecting to %s" % db)
+
+    #return MySQLdb.connect(host=host,user=username,passwd=password,db=db)
+    return mysql.connector.connect(pool_name=db, pool_size=3, **dbconfig)
 
 def get_image_quota(project_id):
     import subprocess
@@ -51,20 +61,24 @@ def get_object_mb_usage(project_id):
 
 def get_expiration_date(project_id):
     try:
+        print("get_expiration_date")
         db = _dbconnect()
         c = db.cursor()
         query = "SELECT date_format(expiration_date, '%%M %%d, %%Y') from project_information where project_id = %s"
-        data = (project_id)
+        data = (project_id,)
         c.execute(query, data)
         date = c.fetchone()
         if date is not None:
             return date[0]
         return "Information not available."
-    except MySQLdb.Error, e:
+    except mysql.connector.Error, e:
         print(str(e))
         return "Information not available..."
+    finally:
+        db.close()
 
 def set_expiration_date(project_id, expiration_date):
+    print("set_expiration_date")
     try:
         db = _dbconnect()
         c = db.cursor()
@@ -75,23 +89,29 @@ def set_expiration_date(project_id, expiration_date):
         db.commit()
     except Exception as e:
         print(str(e))
+    finally:
+        db.close()
 
 def get_start_date(project_id):
+    print("get_start_date")
     try:
         db = _dbconnect()
         c = db.cursor()
         query = "SELECT date_format(start_date, '%%M %%d, %%Y') from project_information where project_id = %s"
-        data = (project_id)
+        data = (project_id,)
         c.execute(query, data)
         date = c.fetchone()
         if date is not None:
             return date[0]
         return "Information not available."
-    except MySQLdb.Error, e:
+    except mysql.connector.Error, e:
         print(str(e))
         return "Information not available..."
+    finally:
+        db.close()
 
 def set_start_date(project_id, start_date):
+    print("set_start_date")
     try:
         db = _dbconnect()
         c = db.cursor()
@@ -102,38 +122,47 @@ def set_start_date(project_id, start_date):
         db.commit()
     except Exception as e:
         print(str(e))
+    finally:
+        db.close()
 
 def get_dair_notice(project_id):
+    print("get_dair_notice")
     try:
         db = _dbconnect()
         c = db.cursor()
         query = "SELECT notice from project_information where project_id = %s"
-        data = (project_id)
+        data = (project_id,)
         c.execute(query, data)
         notice = c.fetchone()
         if notice is not None:
             return notice[0]
         return None
-    except MySQLdb.Error, e:
+    except mysql.connector.Error, e:
         print(str(e))
         return "Information not available..."
+    finally:
+        db.close()
 
 def get_research_participant(project_id):
+    print("get_research_participant")
     try:
         db = _dbconnect()
         c = db.cursor()
         query = "SELECT research_participant from project_information where project_id = %s"
-        data = (project_id)
+        data = (project_id,)
         c.execute(query, data)
         research_participant = c.fetchone()
         if research_participant is not None:
             return research_participant[0]
         return None
-    except MySQLdb.Error, e:
+    except mysql.connector.Error, e:
         print(str(e))
         return "Information not available..."
+    finally:
+        db.close()
 
 def set_dair_notice(project_id, notice, is_admin_notice):
+    print("set_dair_notice")
     try:
         if is_admin_notice:
             project_id = 'admin'
@@ -145,8 +174,11 @@ def set_dair_notice(project_id, notice, is_admin_notice):
         db.commit()
     except Exception as e:
         print(str(e))
+    finally:
+        db.close()
 
 def set_research_participant(project_id, research_participant):
+    print("set_research_participant")
     try:
         db = _dbconnect()
         c = db.cursor()
@@ -156,23 +188,29 @@ def set_research_participant(project_id, research_participant):
         db.commit()
     except Exception as e:
         print(str(e))
+    finally:
+        db.close()
 
 def get_dair_notice_link(project_id):
+    print("get_dair_notice_link")
     try:
         db = _dbconnect()
         c = db.cursor()
         query = "SELECT notice_link from project_information where project_id = %s"
-        data = (project_id)
+        data = (project_id,)
         c.execute(query, data)
         notice_link = c.fetchone()
         if notice_link is not None:
             return notice_link[0]
         return ""
-    except MySQLdb.Error, e:
+    except mysql.connector.Error, e:
         print(str(e))
         return "Information not available..."
+    finally:
+        db.close()
 
 def set_dair_notice_link(project_id, link, is_admin_notice):
+    print("set_dair_notice_link")
     try:
         if is_admin_notice:
             project_id = 'admin'
@@ -184,8 +222,11 @@ def set_dair_notice_link(project_id, link, is_admin_notice):
         db.commit()
     except Exception as e:
         print(str(e))
+    finally:
+        db.close()
 
 def get_dair_admin_notice():
+    print("get_dair_admin_notice")
     try:
         db = _dbconnect()
         c = db.cursor()
@@ -195,11 +236,14 @@ def get_dair_admin_notice():
         if notice is not None:
             return notice[0]
         return None
-    except MySQLdb.Error, e:
+    except mysql.connector.Error, e:
         print(str(e))
         return "Information not available..."
+    finally:
+        db.close()
 
 def get_dair_admin_notice_link():
+    print("get_dair_admin_notice_link")
     try:
         db = _dbconnect()
         c = db.cursor()
@@ -209,9 +253,11 @@ def get_dair_admin_notice_link():
         if notice_link is not None and notice_link[0] != "":
             return notice_link[0]
         return None
-    except MySQLdb.Error, e:
+    except mysql.connector.Error, e:
         print(str(e))
         return "Information not available..."
+    finally:
+        db.close()
 
 def get_reseller_logos():
     #logos = {}
@@ -347,9 +393,11 @@ def get_dair_nova_showback_usage(tenant, start, end):
           #      usage[flavor_name]['cost'] = float("%.2f" % (flavor_cost * hours))
           #      total_cost += usage[flavor_name]['cost']
        # usage['total_cost'] = total_cost
-    except MySQLdb.Error, e:
+    except mysql.connector.Error, e:
         print(str(e))
         return "Information not available..."
+    finally:
+        db.close()
     return usage
 
 def get_dair_glance_showback_usage(tenant, start, end):
@@ -385,9 +433,11 @@ def get_dair_glance_showback_usage(tenant, start, end):
         #    usage[name]['cost'] = float("%.2f" % (usage[name]['size'] * hours * prices['glance']))
         #    total_cost += usage[name]['cost']
         #usage['total_cost'] = total_cost
-    except MySQLdb.Error, e:
+    except mysql.connector.Error, e:
         print(str(e))
         return "Information not available..."
+    finally:
+        db.close()
     return usage
 
 def get_dair_cinder_showback_usage(tenant, start, end):
@@ -420,7 +470,9 @@ def get_dair_cinder_showback_usage(tenant, start, end):
          #   usage[name]['cost'] = float("%.2f" % (usage[name]['size'] * hours * prices['cinder']))
          #   total_cost += usage[name]['cost']
        # usage['total_cost'] = total_cost
-    except MySQLdb.Error, e:
+    except mysql.connector.Error, e:
         print(str(e))
         return "Information not available..."
+    finally:
+        db.close()
     return usage
