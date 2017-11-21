@@ -21,7 +21,7 @@ def _dbconnect(db=None):
         "passwd": password,
         "db": db,
     }
-    print("Connecting to %s" % db)
+    #print("Connecting to %s" % db)
 
     #return MySQLdb.connect(host=host,user=username,passwd=password,db=db)
     return mysql.connector.connect(pool_name=db, pool_size=3, **dbconfig)
@@ -61,7 +61,7 @@ def get_object_mb_usage(project_id):
 
 def get_expiration_date(project_id):
     try:
-        print("get_expiration_date")
+        #print("get_expiration_date")
         db = _dbconnect()
         c = db.cursor()
         query = "SELECT date_format(expiration_date, '%%M %%d, %%Y') from project_information where project_id = %s"
@@ -78,7 +78,7 @@ def get_expiration_date(project_id):
         db.close()
 
 def set_expiration_date(project_id, expiration_date):
-    print("set_expiration_date")
+    #print("set_expiration_date")
     try:
         db = _dbconnect()
         c = db.cursor()
@@ -93,7 +93,7 @@ def set_expiration_date(project_id, expiration_date):
         db.close()
 
 def get_start_date(project_id):
-    print("get_start_date")
+    #print("get_start_date")
     try:
         db = _dbconnect()
         c = db.cursor()
@@ -111,7 +111,7 @@ def get_start_date(project_id):
         db.close()
 
 def set_start_date(project_id, start_date):
-    print("set_start_date")
+    #print("set_start_date")
     try:
         db = _dbconnect()
         c = db.cursor()
@@ -126,7 +126,7 @@ def set_start_date(project_id, start_date):
         db.close()
 
 def get_dair_notice(project_id):
-    print("get_dair_notice")
+    #print("get_dair_notice")
     try:
         db = _dbconnect()
         c = db.cursor()
@@ -144,7 +144,7 @@ def get_dair_notice(project_id):
         db.close()
 
 def get_research_participant(project_id):
-    print("get_research_participant")
+    #print("get_research_participant")
     try:
         db = _dbconnect()
         c = db.cursor()
@@ -162,7 +162,7 @@ def get_research_participant(project_id):
         db.close()
 
 def set_dair_notice(project_id, notice, is_admin_notice):
-    print("set_dair_notice")
+    #print("set_dair_notice")
     try:
         if is_admin_notice:
             project_id = 'admin'
@@ -178,7 +178,7 @@ def set_dair_notice(project_id, notice, is_admin_notice):
         db.close()
 
 def set_research_participant(project_id, research_participant):
-    print("set_research_participant")
+    #print("set_research_participant")
     try:
         db = _dbconnect()
         c = db.cursor()
@@ -192,7 +192,7 @@ def set_research_participant(project_id, research_participant):
         db.close()
 
 def get_dair_notice_link(project_id):
-    print("get_dair_notice_link")
+    #print("get_dair_notice_link")
     try:
         db = _dbconnect()
         c = db.cursor()
@@ -210,7 +210,7 @@ def get_dair_notice_link(project_id):
         db.close()
 
 def set_dair_notice_link(project_id, link, is_admin_notice):
-    print("set_dair_notice_link")
+    #print("set_dair_notice_link")
     try:
         if is_admin_notice:
             project_id = 'admin'
@@ -226,7 +226,7 @@ def set_dair_notice_link(project_id, link, is_admin_notice):
         db.close()
 
 def get_dair_admin_notice():
-    print("get_dair_admin_notice")
+    #print("get_dair_admin_notice")
     try:
         db = _dbconnect()
         c = db.cursor()
@@ -243,7 +243,7 @@ def get_dair_admin_notice():
         db.close()
 
 def get_dair_admin_notice_link():
-    print("get_dair_admin_notice_link")
+    #print("get_dair_admin_notice_link")
     try:
         db = _dbconnect()
         c = db.cursor()
